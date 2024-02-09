@@ -6,7 +6,7 @@ all: build
 build:
 	@echo "Building..."
 	@templ generate
-	@go build -o main cmd/api/main.go
+	@go build -o ./bin/main cmd/api/main.go
 
 # Run the application
 run:
@@ -20,7 +20,7 @@ test:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -f main
+	@rm -f ./bin/main
 
 # Live Reload
 watch:

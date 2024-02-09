@@ -24,3 +24,9 @@ tmp/
 
 # .env file
 .env
+
+# Bin
+bin/
+
+# Templ files
+*_templ.go
