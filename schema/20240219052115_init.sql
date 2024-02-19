@@ -9,24 +9,29 @@ CREATE TABLE wishlist
 );
 CREATE TABLE wishlist_item
 (
-    id           TEXT PRIMARY KEY,
-    wishlist_id  TEXT,
-    link         TEXT    NOT NULL,
-    description  TEXT,
-    wanted_count INTEGER NOT NULL,
+    id          TEXT PRIMARY KEY,
+    wishlist_id TEXT    NOT NULL,
+    link        TEXT    NOT NULL,
+    image_url   TEXT,
+    description TEXT,
+    quantity    INTEGER NOT NULL,
     FOREIGN KEY (wishlist_id) REFERENCES wishlist (id)
 );
 CREATE TABLE wishlist_purchase
 (
     id               TEXT PRIMARY KEY,
-    wishlist_item_id TEXT,
+    wishlist_item_id TEXT     NOT NULL,
+    buyer_name       TEXT     NOT NULL,
+    quantity         INTEGER  NOT NULL,
     bought_at        DATETIME NOT NULL,
+    buyer_email      TEXT,
+    buyer_notes      TEXT,
     FOREIGN KEY (wishlist_item_id) REFERENCES wishlist_item (id)
 );
 CREATE TABLE wishlist_address
 (
     id          TEXT PRIMARY KEY,
-    wishlist_id TEXT,
+    wishlist_id TEXT NOT NULL,
     address     TEXT NOT NULL,
     FOREIGN KEY (wishlist_id) REFERENCES wishlist (id)
 );
