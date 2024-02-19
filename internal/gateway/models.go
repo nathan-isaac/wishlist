@@ -6,10 +6,25 @@ package gateway
 
 import (
 	"database/sql"
+	"time"
 )
 
-type Author struct {
-	ID   int64
-	Name string
-	Bio  sql.NullString
+type Wishlist struct {
+	ID          string
+	Name        string
+	Description sql.NullString
+}
+
+type WishlistItem struct {
+	ID          string
+	WishlistID  sql.NullString
+	Link        string
+	Description sql.NullString
+	WantedCount int64
+}
+
+type WishlistPurchase struct {
+	ID             string
+	WishlistItemID sql.NullString
+	BoughtAt       time.Time
 }

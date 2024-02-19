@@ -1,20 +1,24 @@
 package server
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+	"whishlist/internal/gateway"
 
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Server struct {
-	port int
-	db   *sqlx.DB
+	port    int
+	db      *sql.DB
+	ctx     context.Context
+	queries *gateway.Queries
 }
 
 type Wishlist struct {
@@ -26,55 +30,21 @@ type Wishlist struct {
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 
-	// this Pings the database trying to connect
-	// use sqlx.Open() for sql.Open() semantics
-	db := sqlx.MustConnect("sqlite3", ":memory:")
-
-	db.MustExec(`
-CREATE TABLE wishlist (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    description TEXT
-);
-CREATE TABLE wishlist_item (
-    id TEXT PRIMARY KEY,
-    wishlist_id TEXT,
-    link TEXT NOT NULL,
-    description TEXT,
-    bought BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY(wishlist_id) REFERENCES wishlist(id)
-);
-CREATE TABLE purchase (
-    id TEXT PRIMARY KEY,
-    wishlist_item_id TEXT,
-    bought_at DATETIME NOT NULL,
-    FOREIGN KEY(wishlist_item_id) REFERENCES wishlist_item(id)
-);
-`)
-	wId, err := GenerateId()
+	db, err := sql.Open("sqlite3", "./wishlist.db")
 
 	if err != nil {
 		panic(err)
 	}
 
-	db.MustExec(`
-INSERT INTO wishlist (id, name, description)
-VALUES (?, ?, ?)
-`, wId, "Name", "Description")
+	ctx := context.Background()
 
-	wishlists := []Wishlist{}
-
-	err = db.Select(&wishlists, "SELECT id, name, description FROM wishlist")
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(wishlists)
+	queries := gateway.New(db)
 
 	NewServer := &Server{
-		port: port,
-		db:   db,
+		port:    port,
+		db:      db,
+		ctx:     ctx,
+		queries: queries,
 	}
 
 	// Declare Server config

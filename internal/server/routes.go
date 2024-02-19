@@ -17,7 +17,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/_ping", s.PingHandler)
 
-	wishlists := web.NewWishlists(s.db)
+	wishlists := web.NewWishlists(s.ctx, s.queries)
 	e.GET("/wishlists/:id", wishlists.WishlistShowHandler)
 
 	return e

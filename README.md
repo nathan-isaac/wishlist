@@ -6,6 +6,14 @@ One Paragraph of project description goes here
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
+## Environment
+
+Create a .env file in the root of the project with the following content
+
+```bash
+PORT=8080
+```
+
 ## MakeFile
 
 run all make commands with clean tests

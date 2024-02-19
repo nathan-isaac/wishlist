@@ -30,3 +30,7 @@ bin/
 
 # Templ files
 *_templ.go
+
+# SQLITE DB
+*.db
+*.sqlite3

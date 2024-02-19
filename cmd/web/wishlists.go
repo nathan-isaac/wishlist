@@ -1,24 +1,33 @@
 package web
 
 import (
+	"context"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"whishlist/internal/gateway"
 )
 
 type WishlistController struct {
-	db *sqlx.DB
+	ctx     context.Context
+	queries *gateway.Queries
 }
 
-func NewWishlists(db *sqlx.DB) *WishlistController {
+func NewWishlists(ctx context.Context, queries *gateway.Queries) *WishlistController {
 	return &WishlistController{
-		db: db,
+		ctx:     ctx,
+		queries: queries,
 	}
 }
 
 func (w WishlistController) WishlistShowHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	return c.String(http.StatusOK, fmt.Sprintf("showing wishlist %s", id))
+	wishlist, err := w.queries.GetWishlist(w.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	return c.JSON(http.StatusOK, wishlist)
 }
