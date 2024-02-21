@@ -3,7 +3,6 @@ package web
 import (
 	"context"
 	"fmt"
-	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"whishlist/internal/gateway"
@@ -37,9 +36,20 @@ func (w WishlistController) WishlistShowHandler(c echo.Context) error {
 func (w WishlistController) ShareShowHandler(c echo.Context) error {
 	code := c.Param("code")
 
-	return render(c, views.ShareView(code))
-}
+	share := views.Share{
+		Id:       "ID",
+		Code:     code,
+		Wishlist: views.Wishlist{},
+		Items: []views.Item{
+			{
+				Id:          "ID",
+				Link:        "https://example.com",
+				ImageUrl:    "https://example.com/image.jpg",
+				Description: "Description",
+				Quantity:    1,
+			},
+		},
+	}
 
-func render(ctx echo.Context, cmp templ.Component) error {
-	return cmp.Render(ctx.Request().Context(), ctx.Response())
+	return views.Render(c, views.ShareView(share))
 }

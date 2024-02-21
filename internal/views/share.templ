@@ -1,7 +1,14 @@
 package views
 
-templ ShareView(code string) {
+templ ShareView(share Share) {
 	@Base() {
-	   <h1 class="text-3xl font-bold underline">Share: {code}</h1>
+	   <h1 class="text-3xl font-bold underline">Share: {share.Code}</h1>
+	   <ul>
+	   for _, item := range share.Items {
+           <li>
+               <a href={ templ.SafeURL(item.Link) }>{ item.Description }</a>
+           </li>
+       }
+       </ul>
 	}
 }
