@@ -3,9 +3,11 @@ package web
 import (
 	"context"
 	"fmt"
+	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"whishlist/internal/gateway"
+	"whishlist/internal/views"
 )
 
 type WishlistController struct {
@@ -30,4 +32,14 @@ func (w WishlistController) WishlistShowHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, wishlist)
+}
+
+func (w WishlistController) ShareShowHandler(c echo.Context) error {
+	code := c.Param("code")
+
+	return render(c, views.ShareView(code))
+}
+
+func render(ctx echo.Context, cmp templ.Component) error {
+	return cmp.Render(ctx.Request().Context(), ctx.Response())
 }

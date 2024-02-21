@@ -2,6 +2,7 @@ package web
 
 import (
 	"net/http"
+	"whishlist/internal/views"
 )
 
 func HelloWebHandler(w http.ResponseWriter, r *http.Request) {
@@ -11,6 +12,6 @@ func HelloWebHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
-	component := HelloPost(name)
+	component := views.HelloPost(name)
 	component.Render(r.Context(), w)
 }

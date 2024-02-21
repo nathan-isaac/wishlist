@@ -13,12 +13,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	fileServer := http.FileServer(http.FS(web.Files))
-	e.GET("/js/*", echo.WrapHandler(fileServer))
+	e.GET("/assets/*", echo.WrapHandler(fileServer))
 
 	e.GET("/_ping", s.PingHandler)
 
 	wishlists := web.NewWishlists(s.ctx, s.queries)
 	e.GET("/wishlists/:id", wishlists.WishlistShowHandler)
+	e.GET("/share/:code", wishlists.ShareShowHandler)
 
 	return e
 }
