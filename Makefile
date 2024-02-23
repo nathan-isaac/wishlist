@@ -8,6 +8,10 @@ build:
 	@templ generate
 	@go build -o ./bin/main cmd/api/main.go
 
+build_dev:
+	@echo "Building..."
+	@go build -o ./bin/main cmd/api/main.go
+
 # Tailwind generation watch
 tailwind:
 	@echo "Generating Tailwind CSS..."

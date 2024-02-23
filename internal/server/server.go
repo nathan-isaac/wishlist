@@ -16,6 +16,7 @@ import (
 
 type Server struct {
 	port    int
+	host    string
 	db      *sql.DB
 	ctx     context.Context
 	queries *gateway.Queries
@@ -29,6 +30,7 @@ type Wishlist struct {
 
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
+	host := os.Getenv("HOST")
 
 	db, err := sql.Open("sqlite3", "./wishlist.db")
 
@@ -42,6 +44,7 @@ func NewServer() *http.Server {
 
 	NewServer := &Server{
 		port:    port,
+		host:    host,
 		db:      db,
 		ctx:     ctx,
 		queries: queries,
@@ -49,7 +52,7 @@ func NewServer() *http.Server {
 
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
+		Addr:         fmt.Sprintf("%s:%d", NewServer.host, NewServer.port),
 		Handler:      NewServer.RegisterRoutes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
