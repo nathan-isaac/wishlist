@@ -8,6 +8,15 @@ build:
 	@templ generate
 	@go build -o ./bin/main cmd/api/main.go
 
+# Tailwind generation watch
+tailwind:
+	@echo "Generating Tailwind CSS..."
+	@pnpm tailwindcss -i ./input.css -o ./cmd/web/assets/tailwind.css --watch
+
+templ:
+	@echo "Generating templates..."
+	@templ generate -watch -proxy=http://localhost:8080
+
 # Run the application
 run:
 	@go run cmd/api/main.go
@@ -39,4 +48,4 @@ watch:
 	    fi; \
 	fi
 
-.PHONY: all build run test clean
+.PHONY: all build run test clean tailwind templ watch

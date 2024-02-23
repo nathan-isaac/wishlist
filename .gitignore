@@ -22,6 +22,9 @@ tmp/
 .vscode
 .idea
 
+#OS
+.DS_Store
+
 # .env file
 .env
 
@@ -30,6 +33,7 @@ bin/
 
 # Templ files
 *_templ.go
+*_templ.txt
 
 # SQLITE DB
 *.db
