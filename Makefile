@@ -19,7 +19,7 @@ tailwind:
 
 templ:
 	@echo "Generating templates..."
-	@templ generate -watch -proxy=http://localhost:8080
+	@templ generate -watch -proxy=http://localhost:8080 -open-browser=false
 
 # Run the application
 run:
