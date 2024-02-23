@@ -5,6 +5,7 @@ all: build
 
 build:
 	@echo "Building..."
+	@pnpm tailwindcss -i ./input.css -o ./cmd/web/assets/tailwind.css
 	@templ generate
 	@go build -o ./bin/main cmd/api/main.go
 

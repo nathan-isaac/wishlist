@@ -1,12 +1,9 @@
 {
   "name": "wishlist",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "css": "tailwindcss -i ./input.css -o ./cmd/web/assets/tailwind.css",
-    "css:watch": "tailwindcss -i ./input.css -o ./cmd/web/assets/tailwind.css --watch"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
