@@ -21,6 +21,10 @@ templ:
 	@echo "Generating templates..."
 	@templ generate -watch -proxy=http://localhost:8080 -open-browser=false
 
+templ_fmt:
+	@echo "Formatting templates..."
+	@templ fmt ./internal/views
+
 # Run the application
 run:
 	@go run cmd/api/main.go
