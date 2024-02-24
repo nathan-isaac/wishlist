@@ -15,9 +15,11 @@ type Wishlist struct {
 }
 
 type Item struct {
-	Id          string
-	Link        string
-	ImageUrl    string
-	Description string
-	Quantity    int
+	Id                string
+	Link              string
+	ImageUrl          string
+	Description       string
+	Name              string
+	PurchasedQuantity string
+	NeededQuantity    string
 }

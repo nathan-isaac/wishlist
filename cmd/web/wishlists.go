@@ -37,16 +37,50 @@ func (w WishlistController) ShareShowHandler(c echo.Context) error {
 	code := c.Param("code")
 
 	share := views.Share{
-		Id:       "ID",
-		Code:     code,
-		Wishlist: views.Wishlist{},
+		Id:   "ID",
+		Code: code,
+		Wishlist: views.Wishlist{
+			ID:          "ID",
+			Name:        "Name",
+			Owner:       "Owner",
+			Description: "Description",
+		},
 		Items: []views.Item{
 			{
-				Id:          "ID",
-				Link:        "https://example.com",
-				ImageUrl:    "https://example.com/image.jpg",
-				Description: "Description",
-				Quantity:    1,
+				Id:                "ID",
+				Name:              "Name",
+				Link:              "https://example.com",
+				ImageUrl:          "https://example.com/image.jpg",
+				Description:       "Description",
+				NeededQuantity:    "1",
+				PurchasedQuantity: "0",
+			},
+			{
+				Id:                "ID",
+				Name:              "Name",
+				Link:              "https://example.com",
+				ImageUrl:          "https://example.com/image.jpg",
+				Description:       "Description",
+				NeededQuantity:    "1",
+				PurchasedQuantity: "0",
+			},
+			{
+				Id:                "ID",
+				Name:              "Name",
+				Link:              "https://example.com",
+				ImageUrl:          "https://example.com/image.jpg",
+				Description:       "Description",
+				NeededQuantity:    "2",
+				PurchasedQuantity: "0",
+			},
+			{
+				Id:                "ID",
+				Name:              "Name",
+				Link:              "https://example.com",
+				ImageUrl:          "https://example.com/image.jpg",
+				Description:       "Description",
+				NeededQuantity:    "10",
+				PurchasedQuantity: "0",
 			},
 		},
 	}
