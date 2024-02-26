@@ -21,6 +21,33 @@ func (s *Server) WishlistsShowHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, wishlist)
 }
 
+func (s *Server) WishlistsIndexHandler(c echo.Context) error {
+	wishlists, err := s.queries.ListWishlists(s.ctx)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlists: %s", err))
+	}
+
+	wishlistsView := make([]views.Wishlist, len(wishlists))
+
+	for i, wishlist := range wishlists {
+		wishlistsView[i] = views.Wishlist{
+			ID:          wishlist.ID,
+			Name:        wishlist.Name,
+			Description: wishlist.Description.String,
+			EditURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
+			ShareCode:   wishlist.ShareCode.String,
+		}
+	}
+
+	return views.Render(c, views.WishlistIndexView(
+		views.WishlistIndex{
+			NewWishlistURL: "/admin/wishlists/new",
+			Wishlists:      wishlistsView,
+		},
+	))
+}
+
 func (s *Server) WishlistsNewHandler(c echo.Context) error {
 	return views.Render(c, views.WishlistNewView())
 }
@@ -40,6 +67,7 @@ func (s *Server) WishlistsPostHandler(c echo.Context) error {
 		Name: name,
 		Description: sql.NullString{
 			String: description,
+			Valid:  true,
 		},
 	})
 

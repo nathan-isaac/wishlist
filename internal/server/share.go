@@ -46,6 +46,8 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 			Name:        wishlist.Name,
 			Owner:       "Owner",
 			Description: wishlist.Description.String,
+			EditURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
+			ShareCode:   wishlist.ShareCode.String,
 		},
 		Items: wishlistItems,
 	}

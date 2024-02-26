@@ -28,9 +28,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 		},
 	}))
 
+	admin.GET("/wishlists", s.WishlistsIndexHandler)
+	admin.POST("/wishlists", s.WishlistsPostHandler)
 	admin.GET("/wishlists/new", s.WishlistsNewHandler)
 	admin.GET("/wishlists/:id", s.WishlistsShowHandler)
-	admin.POST("/wishlists", s.WishlistsPostHandler)
 
 	return e
 }
