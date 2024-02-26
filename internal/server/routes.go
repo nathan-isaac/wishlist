@@ -17,9 +17,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/_ping", s.PingHandler)
 
-	wishlists := web.NewWishlists(s.ctx, s.queries)
-	e.GET("/wishlists/:id", wishlists.WishlistShowHandler)
-	e.GET("/share/:code", wishlists.ShareShowHandler)
+	e.GET("/share/:code", s.ShareShowHandler)
+
+	e.GET("/wishlists/new", s.WishlistsNewHandler)
+	e.GET("/wishlists/:id", s.WishlistsShowHandler)
+	e.POST("/wishlists", s.WishlistsPostHandler)
 
 	return e
 }

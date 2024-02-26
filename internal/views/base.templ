@@ -2,7 +2,7 @@ package views
 
 templ Base() {
 	<!DOCTYPE html>
-	<html lang="en" class="bg-gray-100">
+	<html lang="en" class="h-full bg-gray-100">
 		<head>
 			<meta charset="utf-8"/>
 			<title>Go Blueprint Hello</title>
@@ -10,10 +10,8 @@ templ Base() {
 			<link rel="stylesheet" href="/assets/tailwind.css"/>
 			<link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
 		</head>
-		<body>
-			<main>
-				{ children... }
-			</main>
+		<body class="h-full">
+			{ children... }
 		</body>
 	</html>
 }
