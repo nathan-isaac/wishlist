@@ -12,6 +12,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
 	fileServer := http.FileServer(http.FS(web.Files))
 	e.GET("/assets/*", echo.WrapHandler(fileServer))
 
@@ -19,9 +20,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/share/:code", s.ShareShowHandler)
 
-	e.GET("/wishlists/new", s.WishlistsNewHandler)
-	e.GET("/wishlists/:id", s.WishlistsShowHandler)
-	e.POST("/wishlists", s.WishlistsPostHandler)
+	admin := e.Group("/admin")
+
+	admin.Use(middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
+		Validator: func(username string, password string, context echo.Context) (bool, error) {
+			return username == s.admin.Username && password == s.admin.Password, nil
+		},
+	}))
+
+	admin.GET("/wishlists/new", s.WishlistsNewHandler)
+	admin.GET("/wishlists/:id", s.WishlistsShowHandler)
+	admin.POST("/wishlists", s.WishlistsPostHandler)
 
 	return e
 }

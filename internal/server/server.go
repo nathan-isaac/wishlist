@@ -14,12 +14,18 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type AdminUser struct {
+	Username string
+	Password string
+}
+
 type Server struct {
 	port    int
 	host    string
 	db      *sql.DB
 	ctx     context.Context
 	queries *gateway.Queries
+	admin   AdminUser
 }
 
 type Wishlist struct {
@@ -48,6 +54,10 @@ func NewServer() *http.Server {
 		db:      db,
 		ctx:     ctx,
 		queries: queries,
+		admin: AdminUser{
+			Username: os.Getenv("ADMIN_USERNAME"),
+			Password: os.Getenv("ADMIN_PASSWORD"),
+		},
 	}
 
 	// Declare Server config
