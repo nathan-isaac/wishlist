@@ -13,18 +13,32 @@ type Wishlist struct {
 	ID          string
 	Name        string
 	Description sql.NullString
+	ShareCode   sql.NullString
+}
+
+type WishlistAddress struct {
+	ID         string
+	WishlistID string
+	Address    string
 }
 
 type WishlistItem struct {
 	ID          string
-	WishlistID  sql.NullString
+	WishlistID  string
 	Link        string
+	Name        string
 	Description sql.NullString
-	WantedCount int64
+	ImageUrl    sql.NullString
+	Quantity    int64
+	Price       int64
 }
 
 type WishlistPurchase struct {
 	ID             string
-	WishlistItemID sql.NullString
+	WishlistItemID string
+	BuyerName      string
+	Quantity       int64
 	BoughtAt       time.Time
+	BuyerEmail     sql.NullString
+	BuyerNotes     sql.NullString
 }

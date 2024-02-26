@@ -26,6 +26,32 @@ func (q *Queries) CreateWishlist(ctx context.Context, arg CreateWishlistParams) 
 	return err
 }
 
+const createWishlistItem = `-- name: CreateWishlistItem :exec
+INSERT INTO wishlist_item (id, wishlist_id, link, image_url, description, quantity)
+VALUES (?, ?, ?, ?, ?, ?)
+`
+
+type CreateWishlistItemParams struct {
+	ID          string
+	WishlistID  string
+	Link        string
+	ImageUrl    sql.NullString
+	Description sql.NullString
+	Quantity    int64
+}
+
+func (q *Queries) CreateWishlistItem(ctx context.Context, arg CreateWishlistItemParams) error {
+	_, err := q.db.ExecContext(ctx, createWishlistItem,
+		arg.ID,
+		arg.WishlistID,
+		arg.Link,
+		arg.ImageUrl,
+		arg.Description,
+		arg.Quantity,
+	)
+	return err
+}
+
 const deleteWishlist = `-- name: DeleteWishlist :exec
 DELETE
 FROM wishlist
@@ -37,21 +63,44 @@ func (q *Queries) DeleteWishlist(ctx context.Context, id string) error {
 	return err
 }
 
-const getWishlist = `-- name: GetWishlist :one
-SELECT id, name, description
+const findWishlist = `-- name: FindWishlist :one
+SELECT id, name, description, share_code
 FROM wishlist
 WHERE id = ? LIMIT 1
 `
 
-func (q *Queries) GetWishlist(ctx context.Context, id string) (Wishlist, error) {
-	row := q.db.QueryRowContext(ctx, getWishlist, id)
+func (q *Queries) FindWishlist(ctx context.Context, id string) (Wishlist, error) {
+	row := q.db.QueryRowContext(ctx, findWishlist, id)
 	var i Wishlist
-	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.ShareCode,
+	)
+	return i, err
+}
+
+const findWishlistByShareCode = `-- name: FindWishlistByShareCode :one
+SELECT id, name, description, share_code
+FROM wishlist
+WHERE share_code = ? LIMIT 1
+`
+
+func (q *Queries) FindWishlistByShareCode(ctx context.Context, shareCode sql.NullString) (Wishlist, error) {
+	row := q.db.QueryRowContext(ctx, findWishlistByShareCode, shareCode)
+	var i Wishlist
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.ShareCode,
+	)
 	return i, err
 }
 
 const listWishlists = `-- name: ListWishlists :many
-SELECT id, name, description
+SELECT id, name, description, share_code
 FROM wishlist
 ORDER BY name
 `
@@ -65,7 +114,51 @@ func (q *Queries) ListWishlists(ctx context.Context) ([]Wishlist, error) {
 	var items []Wishlist
 	for rows.Next() {
 		var i Wishlist
-		if err := rows.Scan(&i.ID, &i.Name, &i.Description); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.ShareCode,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listWishlistsItemsForWishlist = `-- name: ListWishlistsItemsForWishlist :many
+SELECT id, wishlist_id, link, name, description, image_url, quantity, price
+FROM wishlist_item
+WHERE wishlist_id = ?
+ORDER BY name
+`
+
+func (q *Queries) ListWishlistsItemsForWishlist(ctx context.Context, wishlistID string) ([]WishlistItem, error) {
+	rows, err := q.db.QueryContext(ctx, listWishlistsItemsForWishlist, wishlistID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []WishlistItem
+	for rows.Next() {
+		var i WishlistItem
+		if err := rows.Scan(
+			&i.ID,
+			&i.WishlistID,
+			&i.Link,
+			&i.Name,
+			&i.Description,
+			&i.ImageUrl,
+			&i.Quantity,
+			&i.Price,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

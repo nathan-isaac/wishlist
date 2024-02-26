@@ -20,6 +20,7 @@ type Item struct {
 	ImageUrl          string
 	Description       string
 	Name              string
+	Price             string
 	PurchasedQuantity string
 	NeededQuantity    string
 }

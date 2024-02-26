@@ -12,9 +12,11 @@ CREATE TABLE wishlist_item
     id          TEXT PRIMARY KEY,
     wishlist_id TEXT    NOT NULL,
     link        TEXT    NOT NULL,
-    image_url   TEXT,
+    name        TEXT    NOT NULL,
     description TEXT,
+    image_url   TEXT,
     quantity    INTEGER NOT NULL,
+    price       INTEGER NOT NULL,
     FOREIGN KEY (wishlist_id) REFERENCES wishlist (id)
 );
 CREATE TABLE wishlist_purchase

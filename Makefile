@@ -18,6 +18,10 @@ tailwind:
 	@echo "Generating Tailwind CSS..."
 	@pnpm tailwindcss -i ./input.css -o ./cmd/web/assets/tailwind.css --watch
 
+sqlc:
+	@echo "Generating SQLC..."
+	@sqlc generate
+
 templ:
 	@echo "Generating templates..."
 	@templ generate -watch -proxy=http://localhost:8080 -open-browser=false
@@ -57,4 +61,4 @@ watch:
 	    fi; \
 	fi
 
-.PHONY: all build run test clean tailwind templ watch
+.PHONY: all build run test clean tailwind templ watch sqlc templ_fmt build_dev
