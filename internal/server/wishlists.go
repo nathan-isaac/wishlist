@@ -1,9 +1,11 @@
 package server
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"whishlist/internal/gateway"
 	"whishlist/internal/views"
 )
 
@@ -24,13 +26,26 @@ func (s *Server) WishlistsNewHandler(c echo.Context) error {
 }
 
 func (s *Server) WishlistsPostHandler(c echo.Context) error {
-	id := c.Param("id")
+	name := c.FormValue("name")
+	description := c.FormValue("description")
 
-	wishlist, err := s.queries.FindWishlist(s.ctx, id)
+	id, err := GenerateId()
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error generating id: %s", err))
 	}
 
-	return c.JSON(http.StatusOK, wishlist)
+	err = s.queries.CreateWishlist(s.ctx, gateway.CreateWishlistParams{
+		ID:   id,
+		Name: name,
+		Description: sql.NullString{
+			String: description,
+		},
+	})
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error creating wishlist: %s", err))
+	}
+
+	return c.Redirect(http.StatusFound, "/admin/wishlists")
 }

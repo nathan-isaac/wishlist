@@ -14,8 +14,8 @@ FROM wishlist
 ORDER BY name;
 
 -- name: CreateWishlist :exec
-INSERT INTO wishlist (id, name, description)
-VALUES (?, ?, ?);
+INSERT INTO wishlist (id, name, description, share_code)
+VALUES (?, ?, ?, ?);
 
 -- name: UpdateWishlist :exec
 UPDATE wishlist

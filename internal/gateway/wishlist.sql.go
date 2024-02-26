@@ -11,18 +11,24 @@ import (
 )
 
 const createWishlist = `-- name: CreateWishlist :exec
-INSERT INTO wishlist (id, name, description)
-VALUES (?, ?, ?)
+INSERT INTO wishlist (id, name, description, share_code)
+VALUES (?, ?, ?, ?)
 `
 
 type CreateWishlistParams struct {
 	ID          string
 	Name        string
 	Description sql.NullString
+	ShareCode   sql.NullString
 }
 
 func (q *Queries) CreateWishlist(ctx context.Context, arg CreateWishlistParams) error {
-	_, err := q.db.ExecContext(ctx, createWishlist, arg.ID, arg.Name, arg.Description)
+	_, err := q.db.ExecContext(ctx, createWishlist,
+		arg.ID,
+		arg.Name,
+		arg.Description,
+		arg.ShareCode,
+	)
 	return err
 }
 
