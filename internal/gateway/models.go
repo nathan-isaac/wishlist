@@ -13,7 +13,8 @@ type Wishlist struct {
 	ID          string
 	Name        string
 	Description sql.NullString
-	ShareCode   sql.NullString
+	ShareCode   string
+	Public      bool
 }
 
 type WishlistAddress struct {

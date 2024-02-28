@@ -11,15 +11,16 @@ import (
 )
 
 const createWishlist = `-- name: CreateWishlist :exec
-INSERT INTO wishlist (id, name, description, share_code)
-VALUES (?, ?, ?, ?)
+INSERT INTO wishlist (id, name, description, share_code, public)
+VALUES (?, ?, ?, ?, ?)
 `
 
 type CreateWishlistParams struct {
 	ID          string
 	Name        string
 	Description sql.NullString
-	ShareCode   sql.NullString
+	ShareCode   string
+	Public      bool
 }
 
 func (q *Queries) CreateWishlist(ctx context.Context, arg CreateWishlistParams) error {
@@ -28,6 +29,7 @@ func (q *Queries) CreateWishlist(ctx context.Context, arg CreateWishlistParams) 
 		arg.Name,
 		arg.Description,
 		arg.ShareCode,
+		arg.Public,
 	)
 	return err
 }
@@ -70,7 +72,7 @@ func (q *Queries) DeleteWishlist(ctx context.Context, id string) error {
 }
 
 const findWishlist = `-- name: FindWishlist :one
-SELECT id, name, description, share_code
+SELECT id, name, description, share_code, public
 FROM wishlist
 WHERE id = ? LIMIT 1
 `
@@ -83,17 +85,18 @@ func (q *Queries) FindWishlist(ctx context.Context, id string) (Wishlist, error)
 		&i.Name,
 		&i.Description,
 		&i.ShareCode,
+		&i.Public,
 	)
 	return i, err
 }
 
 const findWishlistByShareCode = `-- name: FindWishlistByShareCode :one
-SELECT id, name, description, share_code
+SELECT id, name, description, share_code, public
 FROM wishlist
 WHERE share_code = ? LIMIT 1
 `
 
-func (q *Queries) FindWishlistByShareCode(ctx context.Context, shareCode sql.NullString) (Wishlist, error) {
+func (q *Queries) FindWishlistByShareCode(ctx context.Context, shareCode string) (Wishlist, error) {
 	row := q.db.QueryRowContext(ctx, findWishlistByShareCode, shareCode)
 	var i Wishlist
 	err := row.Scan(
@@ -101,12 +104,13 @@ func (q *Queries) FindWishlistByShareCode(ctx context.Context, shareCode sql.Nul
 		&i.Name,
 		&i.Description,
 		&i.ShareCode,
+		&i.Public,
 	)
 	return i, err
 }
 
 const listWishlists = `-- name: ListWishlists :many
-SELECT id, name, description, share_code
+SELECT id, name, description, share_code, public
 FROM wishlist
 ORDER BY name
 `
@@ -125,6 +129,7 @@ func (q *Queries) ListWishlists(ctx context.Context) ([]Wishlist, error) {
 			&i.Name,
 			&i.Description,
 			&i.ShareCode,
+			&i.Public,
 		); err != nil {
 			return nil, err
 		}

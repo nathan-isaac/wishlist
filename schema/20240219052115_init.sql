@@ -5,7 +5,8 @@ CREATE TABLE wishlist
     id          TEXT PRIMARY KEY,
     name        TEXT NOT NULL,
     description TEXT,
-    share_code  TEXT UNIQUE
+    share_code  TEXT UNIQUE NOT NULL,
+    public      BOOLEAN NOT NULL
 );
 CREATE TABLE wishlist_item
 (

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 func (s *Server) ShareShowHandler(c echo.Context) error {
 	code := c.Param("code")
 
-	wishlist, err := s.queries.FindWishlistByShareCode(s.ctx, sql.NullString{String: code, Valid: true})
+	wishlist, err := s.queries.FindWishlistByShareCode(s.ctx, code)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
@@ -39,17 +38,10 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 	}
 
 	share := views.Share{
-		Id:   wishlist.ID,
-		Code: code,
-		Wishlist: views.Wishlist{
-			ID:          wishlist.ID,
-			Name:        wishlist.Name,
-			Owner:       "Owner",
-			Description: wishlist.Description.String,
-			EditURL:     fmt.Sprintf("/admin/wishlists/%s/edit", wishlist.ID),
-			ShareCode:   wishlist.ShareCode.String,
-		},
-		Items: wishlistItems,
+		Id:       wishlist.ID,
+		Code:     code,
+		Wishlist: views.ToWishlist(wishlist),
+		Items:    wishlistItems,
 	}
 
 	return views.Render(c, views.ShareView(share))

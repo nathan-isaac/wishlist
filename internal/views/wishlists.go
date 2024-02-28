@@ -38,6 +38,6 @@ func ToWishlist(wishlist gateway.Wishlist) Wishlist {
 		Description: wishlist.Description.String,
 		EditURL:     fmt.Sprintf("/admin/wishlists/%s/edit", wishlist.ID),
 		ShowURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
-		ShareCode:   wishlist.ShareCode.String,
+		ShareCode:   wishlist.ShareCode,
 	}
 }

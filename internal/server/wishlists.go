@@ -71,13 +71,13 @@ func (s *Server) WishlistsDeleteHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	err = s.queries.DeleteWishlist(s.ctx, id)
+	err = s.queries.DeleteWishlist(s.ctx, wishlist.ID)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error deleting wishlist: %s", err))
 	}
 
-	return c.JSON(http.StatusOK, wishlist)
+	return HxRedirect(c, "/admin/wishlists")
 }
 
 func (s *Server) WishlistsIndexHandler(c echo.Context) error {
@@ -113,6 +113,12 @@ func (s *Server) WishlistsPostHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error generating id: %s", err))
 	}
 
+	shareId, err := GenerateShareId()
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error generating share id: %s", err))
+	}
+
 	err = s.queries.CreateWishlist(s.ctx, gateway.CreateWishlistParams{
 		ID:   id,
 		Name: name,
@@ -120,6 +126,8 @@ func (s *Server) WishlistsPostHandler(c echo.Context) error {
 			String: description,
 			Valid:  true,
 		},
+		ShareCode: shareId,
+		Public:    false,
 	})
 
 	if err != nil {
