@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"whishlist/internal/gateway"
+	"whishlist/internal/utils"
 	"whishlist/internal/views"
 )
 
@@ -18,6 +19,64 @@ func (s *Server) WishlistsShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
+	return views.Render(c, views.WishlistShowView(views.ToWishlist(wishlist)))
+}
+
+func (s *Server) WishlistsEditHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	wishlist, err := s.queries.FindWishlist(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	return views.Render(c, views.WishlistEditView(views.ToWishlist(wishlist)))
+}
+
+func (s *Server) WishlistsUpdateHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	wishlist, err := s.queries.FindWishlist(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	name := c.FormValue("name")
+	description := c.FormValue("description")
+
+	err = s.queries.UpdateWishlist(s.ctx, gateway.UpdateWishlistParams{
+		ID:   wishlist.ID,
+		Name: name,
+		Description: sql.NullString{
+			String: description,
+			Valid:  true,
+		},
+	})
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error updating wishlist: %s", err))
+	}
+
+	return HxRedirect(c, fmt.Sprintf("/admin/wishlists/%s", wishlist.ID))
+}
+
+func (s *Server) WishlistsDeleteHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	wishlist, err := s.queries.FindWishlist(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	err = s.queries.DeleteWishlist(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error deleting wishlist: %s", err))
+	}
+
 	return c.JSON(http.StatusOK, wishlist)
 }
 
@@ -28,17 +87,9 @@ func (s *Server) WishlistsIndexHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlists: %s", err))
 	}
 
-	wishlistsView := make([]views.Wishlist, len(wishlists))
-
-	for i, wishlist := range wishlists {
-		wishlistsView[i] = views.Wishlist{
-			ID:          wishlist.ID,
-			Name:        wishlist.Name,
-			Description: wishlist.Description.String,
-			EditURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
-			ShareCode:   wishlist.ShareCode.String,
-		}
-	}
+	wishlistsView := utils.Map(wishlists, func(wishlist gateway.Wishlist) views.Wishlist {
+		return views.ToWishlist(wishlist)
+	})
 
 	return views.Render(c, views.WishlistIndexView(
 		views.WishlistIndex{

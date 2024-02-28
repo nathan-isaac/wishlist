@@ -62,11 +62,10 @@ templ WishlistIndexView(index WishlistIndex) {
 															<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ item.Description }</td>
 															<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ item.ShareCode }</td>
 															<td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-																<a href={ templ.URL(item.EditURL) } class="text-primary-600 hover:text-primary-900">Edit<span class="sr-only">, { item.Name }</span></a>
+																<a href={ templ.URL(item.ShowURL) } class="text-primary-600 hover:text-primary-900">View<span class="sr-only">, { item.Name }</span></a>
 															</td>
 														</tr>
 													}
-													<!-- More people... -->
 												</tbody>
 											</table>
 										</div>
