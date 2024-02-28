@@ -13,46 +13,25 @@ Create a .env file in the root of the project with the following content
 ```bash
 PORT=8080
 HOST=localhost
+
+ADMIN_USER=admin
+ADMIN_PASSWORD=admin
 ```
 
-## MakeFile
+## Database
 
-run all make commands with clean tests
 ```bash
-make all build
+GOOSE_MIGRATION_DIR=schema GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=./wishlist.db goose up
 ```
 
-build the application
-```bash
-make build
-```
+## Prerequisites
 
-run the application
-```bash
-make run
-```
+- https://github.com/cosmtrek/air
+- https://github.com/pressly/goose
+- https://docs.sqlc.dev/
+- https://github.com/pvolok/mprocs
 
-Create DB container
 ```bash
-make docker-run
-```
-
-Shutdown DB container
-```bash
-make docker-down
-```
-
-live reload the application
-```bash
-make watch
-```
-
-run the test suite
-```bash
-make test
-```
-
-clean up binary from the last build
-```bash
-make clean
+go install github.com/pressly/goose/v3/cmd/goose@latest
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 ```
