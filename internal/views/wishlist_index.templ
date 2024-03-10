@@ -1,81 +1,62 @@
 package views
 
 templ WishlistIndexView(index WishlistIndex) {
-	@Base() {
-		<div class="min-h-full">
-			<nav class="bg-white shadow-sm">
-				<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-					<div class="flex h-16 justify-between">
-						<div class="flex">
-							<div class="flex flex-shrink-0 items-center">
-								<div class="font-medium text-lg text-primary-700">
-									Wishlists
+	@AdminBase() {
+		<header>
+			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">Wishlists</h1>
+			</div>
+		</header>
+		<main>
+			<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+				<div class="px-4 sm:px-0">
+					<div class="sm:flex sm:items-center">
+						<div class="sm:flex-auto">
+							<h1 class="text-base font-semibold leading-6 text-gray-900">Wishlists</h1>
+							<p class="mt-2 text-sm text-gray-700">This is your list of wishlists.</p>
+						</div>
+						<div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+							<a href={ templ.URL(index.NewWishlistURL) } class="block rounded-md bg-primary-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">Add wishlist</a>
+						</div>
+					</div>
+					<div class="mt-8 flow-root">
+						<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+							<div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+								<div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+									<table class="min-w-full divide-y divide-gray-300">
+										<thead class="bg-gray-50">
+											<tr>
+												<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
+												<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
+												<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Share Code</th>
+												<th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+													<span class="sr-only">Edit</span>
+												</th>
+											</tr>
+										</thead>
+										<tbody class="divide-y divide-gray-200 bg-white">
+											for _, item := range index.Wishlists {
+												<tr>
+													<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{ item.Name }</td>
+													<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ item.Description }</td>
+													<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+														<a href={ templ.URL(item.ShareURL) } class="text-primary-600 hover:text-primary-900">
+															{ item.ShareCode }
+														</a>
+													</td>
+													<td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+														<a href={ templ.URL(item.ShowURL) } class="text-primary-600 hover:text-primary-900">View<span class="sr-only">, { item.Name }</span></a>
+													</td>
+												</tr>
+											}
+										</tbody>
+									</table>
 								</div>
 							</div>
-							<div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-								<!-- Current: "border-primary-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-								<a href="#" class="border-primary-500 text-gray-900 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium" aria-current="page">Wishlists</a>
-							</div>
 						</div>
-						<div class="hidden sm:ml-6 sm:flex sm:items-center"></div>
-						<div class="-mr-2 flex items-center sm:hidden"></div>
 					</div>
 				</div>
-			</nav>
-			<div class="py-10 space-y-12">
-				<header>
-					<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-						<h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">Wishlists</h1>
-					</div>
-				</header>
-				<main>
-					<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-						<div class="px-4 sm:px-0">
-							<div class="sm:flex sm:items-center">
-								<div class="sm:flex-auto">
-									<h1 class="text-base font-semibold leading-6 text-gray-900">Wishlists</h1>
-									<p class="mt-2 text-sm text-gray-700">This is your list of wishlists.</p>
-								</div>
-								<div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-									<a href={ templ.URL(index.NewWishlistURL) } class="block rounded-md bg-primary-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">Add wishlist</a>
-								</div>
-							</div>
-							<div class="mt-8 flow-root">
-								<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-									<div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-										<div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-											<table class="min-w-full divide-y divide-gray-300">
-												<thead class="bg-gray-50">
-													<tr>
-														<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
-														<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
-														<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Share Code</th>
-														<th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-															<span class="sr-only">Edit</span>
-														</th>
-													</tr>
-												</thead>
-												<tbody class="divide-y divide-gray-200 bg-white">
-													for _, item := range index.Wishlists {
-														<tr>
-															<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{ item.Name }</td>
-															<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ item.Description }</td>
-															<td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ item.ShareCode }</td>
-															<td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-																<a href={ templ.URL(item.ShowURL) } class="text-primary-600 hover:text-primary-900">View<span class="sr-only">, { item.Name }</span></a>
-															</td>
-														</tr>
-													}
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</main>
 			</div>
-		</div>
+		</main>
 	}
 }

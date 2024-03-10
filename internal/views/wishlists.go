@@ -17,6 +17,7 @@ type Wishlist struct {
 	Description string
 	EditURL     string
 	ShowURL     string
+	ShareURL    string
 	ShareCode   string
 }
 
@@ -38,6 +39,7 @@ func ToWishlist(wishlist gateway.Wishlist) Wishlist {
 		Description: wishlist.Description.String,
 		EditURL:     fmt.Sprintf("/admin/wishlists/%s/edit", wishlist.ID),
 		ShowURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
+		ShareURL:    fmt.Sprintf("/share/%s", wishlist.ShareCode),
 		ShareCode:   wishlist.ShareCode,
 	}
 }
