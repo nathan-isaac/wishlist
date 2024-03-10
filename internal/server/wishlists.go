@@ -136,3 +136,7 @@ func (s *Server) WishlistsPostHandler(c echo.Context) error {
 
 	return c.Redirect(http.StatusFound, "/admin/wishlists")
 }
+
+func (s *Server) ItemsNewHandler(c echo.Context) error {
+	return views.Render(c, views.ItemNewView())
+}
