@@ -30,6 +30,7 @@ type Item struct {
 	Price             string
 	PurchasedQuantity string
 	NeededQuantity    string
+	EditURL           string
 }
 
 func ToWishlist(wishlist gateway.Wishlist) Wishlist {
@@ -41,5 +42,19 @@ func ToWishlist(wishlist gateway.Wishlist) Wishlist {
 		ShowURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
 		ShareURL:    fmt.Sprintf("/share/%s", wishlist.ShareCode),
 		ShareCode:   wishlist.ShareCode,
+	}
+}
+
+func ToItem(item gateway.WishlistItem) Item {
+	return Item{
+		Id:                item.ID,
+		Name:              item.Name,
+		Link:              item.Link,
+		ImageUrl:          item.ImageUrl,
+		Description:       item.Description,
+		Price:             fmt.Sprintf("%d", item.Price),
+		NeededQuantity:    fmt.Sprintf("%d", item.Quantity),
+		PurchasedQuantity: "0",
+		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ID),
 	}
 }

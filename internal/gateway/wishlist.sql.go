@@ -74,6 +74,45 @@ func (q *Queries) DeleteWishlist(ctx context.Context, id string) error {
 	return err
 }
 
+const filerItemsForWishlist = `-- name: FilerItemsForWishlist :many
+SELECT id, wishlist_id, link, name, description, image_url, quantity, price
+FROM wishlist_item
+WHERE wishlist_id = ?
+ORDER BY name
+`
+
+func (q *Queries) FilerItemsForWishlist(ctx context.Context, wishlistID string) ([]WishlistItem, error) {
+	rows, err := q.db.QueryContext(ctx, filerItemsForWishlist, wishlistID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []WishlistItem
+	for rows.Next() {
+		var i WishlistItem
+		if err := rows.Scan(
+			&i.ID,
+			&i.WishlistID,
+			&i.Link,
+			&i.Name,
+			&i.Description,
+			&i.ImageUrl,
+			&i.Quantity,
+			&i.Price,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const findWishlist = `-- name: FindWishlist :one
 SELECT id, name, description, share_code, public
 FROM wishlist
@@ -133,45 +172,6 @@ func (q *Queries) ListWishlists(ctx context.Context) ([]Wishlist, error) {
 			&i.Description,
 			&i.ShareCode,
 			&i.Public,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listWishlistsItemsForWishlist = `-- name: ListWishlistsItemsForWishlist :many
-SELECT id, wishlist_id, link, name, description, image_url, quantity, price
-FROM wishlist_item
-WHERE wishlist_id = ?
-ORDER BY name
-`
-
-func (q *Queries) ListWishlistsItemsForWishlist(ctx context.Context, wishlistID string) ([]WishlistItem, error) {
-	rows, err := q.db.QueryContext(ctx, listWishlistsItemsForWishlist, wishlistID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []WishlistItem
-	for rows.Next() {
-		var i WishlistItem
-		if err := rows.Scan(
-			&i.ID,
-			&i.WishlistID,
-			&i.Link,
-			&i.Name,
-			&i.Description,
-			&i.ImageUrl,
-			&i.Quantity,
-			&i.Price,
 		); err != nil {
 			return nil, err
 		}

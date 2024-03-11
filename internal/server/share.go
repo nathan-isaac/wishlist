@@ -17,7 +17,7 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	items, err := s.queries.ListWishlistsItemsForWishlist(s.ctx, wishlist.ID)
+	items, err := s.queries.FilerItemsForWishlist(s.ctx, wishlist.ID)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
@@ -26,16 +26,7 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 	wishlistItems := make([]domain.Item, len(items))
 
 	for i, item := range items {
-		wishlistItems[i] = domain.Item{
-			Id:                item.ID,
-			Name:              item.Name,
-			Link:              item.Link,
-			ImageUrl:          item.ImageUrl,
-			Description:       item.Description,
-			Price:             fmt.Sprintf("%d", item.Price),
-			NeededQuantity:    fmt.Sprintf("%d", item.Quantity),
-			PurchasedQuantity: "0",
-		}
+		wishlistItems[i] = domain.ToItem(item)
 	}
 
 	share := domain.Share{

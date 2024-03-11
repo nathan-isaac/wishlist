@@ -32,7 +32,7 @@ WHERE id = ?;
 INSERT INTO wishlist_item (id, wishlist_id, name, link, image_url, description, quantity, price)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
--- name: ListWishlistsItemsForWishlist :many
+-- name: FilerItemsForWishlist :many
 SELECT *
 FROM wishlist_item
 WHERE wishlist_id = ?
