@@ -14,7 +14,7 @@ templ ShareView(share domain.Share) {
 			<div class="pb-24">
 				<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					for _, item := range share.Items {
-						<li class="col-span-1 rounded bg-white shadow p-6 space-y-6">
+						<li class="col-span-1 rounded bg-white shadow p-6 space-y-6 flex flex-col justify-between">
 							<div class="text-sm text-gray-500 text-right">
 								{ item.PurchasedQuantity } of { item.NeededQuantity } Purchased
 							</div>
