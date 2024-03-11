@@ -5,14 +5,22 @@
 package gateway
 
 import (
-	"database/sql"
 	"time"
 )
+
+type Address struct {
+	ID      string
+	Street  string
+	City    string
+	State   string
+	Zip     string
+	Country string
+}
 
 type Wishlist struct {
 	ID          string
 	Name        string
-	Description sql.NullString
+	Description string
 	ShareCode   string
 	Public      bool
 }
@@ -20,7 +28,6 @@ type Wishlist struct {
 type WishlistAddress struct {
 	ID         string
 	WishlistID string
-	Address    string
 }
 
 type WishlistItem struct {
@@ -28,8 +35,8 @@ type WishlistItem struct {
 	WishlistID  string
 	Link        string
 	Name        string
-	Description sql.NullString
-	ImageUrl    sql.NullString
+	Description string
+	ImageUrl    string
 	Quantity    int64
 	Price       int64
 }
@@ -40,6 +47,6 @@ type WishlistPurchase struct {
 	BuyerName      string
 	Quantity       int64
 	BoughtAt       time.Time
-	BuyerEmail     sql.NullString
-	BuyerNotes     sql.NullString
+	BuyerEmail     string
+	BuyerNotes     string
 }

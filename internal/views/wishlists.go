@@ -36,7 +36,7 @@ func ToWishlist(wishlist gateway.Wishlist) Wishlist {
 	return Wishlist{
 		ID:          wishlist.ID,
 		Name:        wishlist.Name,
-		Description: wishlist.Description.String,
+		Description: wishlist.Description,
 		EditURL:     fmt.Sprintf("/admin/wishlists/%s/edit", wishlist.ID),
 		ShowURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
 		ShareURL:    fmt.Sprintf("/share/%s", wishlist.ShareCode),

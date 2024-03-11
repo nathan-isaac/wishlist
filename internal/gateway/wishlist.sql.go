@@ -7,7 +7,6 @@ package gateway
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createWishlist = `-- name: CreateWishlist :exec
@@ -18,7 +17,7 @@ VALUES (?, ?, ?, ?, ?)
 type CreateWishlistParams struct {
 	ID          string
 	Name        string
-	Description sql.NullString
+	Description string
 	ShareCode   string
 	Public      bool
 }
@@ -35,27 +34,31 @@ func (q *Queries) CreateWishlist(ctx context.Context, arg CreateWishlistParams) 
 }
 
 const createWishlistItem = `-- name: CreateWishlistItem :exec
-INSERT INTO wishlist_item (id, wishlist_id, link, image_url, description, quantity)
-VALUES (?, ?, ?, ?, ?, ?)
+INSERT INTO wishlist_item (id, wishlist_id, name, link, image_url, description, quantity, price)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateWishlistItemParams struct {
 	ID          string
 	WishlistID  string
+	Name        string
 	Link        string
-	ImageUrl    sql.NullString
-	Description sql.NullString
+	ImageUrl    string
+	Description string
 	Quantity    int64
+	Price       int64
 }
 
 func (q *Queries) CreateWishlistItem(ctx context.Context, arg CreateWishlistItemParams) error {
 	_, err := q.db.ExecContext(ctx, createWishlistItem,
 		arg.ID,
 		arg.WishlistID,
+		arg.Name,
 		arg.Link,
 		arg.ImageUrl,
 		arg.Description,
 		arg.Quantity,
+		arg.Price,
 	)
 	return err
 }
@@ -192,7 +195,7 @@ WHERE id = ?
 
 type UpdateWishlistParams struct {
 	Name        string
-	Description sql.NullString
+	Description string
 	ID          string
 }
 

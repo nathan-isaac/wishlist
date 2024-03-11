@@ -29,8 +29,8 @@ FROM wishlist
 WHERE id = ?;
 
 -- name: CreateWishlistItem :exec
-INSERT INTO wishlist_item (id, wishlist_id, link, image_url, description, quantity)
-VALUES (?, ?, ?, ?, ?, ?);
+INSERT INTO wishlist_item (id, wishlist_id, name, link, image_url, description, quantity, price)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: ListWishlistsItemsForWishlist :many
 SELECT *

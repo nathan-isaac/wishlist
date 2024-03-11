@@ -1,10 +1,11 @@
 package server
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
+	"strings"
 	"whishlist/internal/gateway"
 	"whishlist/internal/utils"
 	"whishlist/internal/views"
@@ -47,12 +48,9 @@ func (s *Server) WishlistsUpdateHandler(c echo.Context) error {
 	description := c.FormValue("description")
 
 	err = s.queries.UpdateWishlist(s.ctx, gateway.UpdateWishlistParams{
-		ID:   wishlist.ID,
-		Name: name,
-		Description: sql.NullString{
-			String: description,
-			Valid:  true,
-		},
+		ID:          wishlist.ID,
+		Name:        name,
+		Description: description,
 	})
 
 	if err != nil {
@@ -120,14 +118,11 @@ func (s *Server) WishlistsPostHandler(c echo.Context) error {
 	}
 
 	err = s.queries.CreateWishlist(s.ctx, gateway.CreateWishlistParams{
-		ID:   id,
-		Name: name,
-		Description: sql.NullString{
-			String: description,
-			Valid:  true,
-		},
-		ShareCode: shareId,
-		Public:    false,
+		ID:          id,
+		Name:        name,
+		Description: description,
+		ShareCode:   shareId,
+		Public:      false,
 	})
 
 	if err != nil {
@@ -138,5 +133,62 @@ func (s *Server) WishlistsPostHandler(c echo.Context) error {
 }
 
 func (s *Server) ItemsNewHandler(c echo.Context) error {
-	return views.Render(c, views.ItemNewView())
+	id := c.Param("id")
+
+	wishlist, err := s.queries.FindWishlist(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	return views.Render(c, views.ItemNewView(views.ToWishlist(wishlist)))
+}
+
+func priceToInt(price string) (int64, error) {
+	priceWithoutDecimal := strings.Replace(price, ".", "", -1)
+	return strconv.ParseInt(priceWithoutDecimal, 10, 0)
+}
+
+func (s *Server) ItemsPostHandler(c echo.Context) error {
+	wishlistId := c.FormValue("wishlist_id")
+
+	wishlist, err := s.queries.FindWishlist(s.ctx, wishlistId)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	name := c.FormValue("name")
+	link := c.FormValue("link")
+	description := c.FormValue("description")
+	imageURL := c.FormValue("image_url")
+	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 0)
+	price, err := priceToInt(c.FormValue("price"))
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error parsing quantity or price: %s", err))
+	}
+
+	id, err := GenerateId()
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error generating id: %s", err))
+	}
+
+	err = s.queries.CreateWishlistItem(s.ctx, gateway.CreateWishlistItemParams{
+		ID:          id,
+		WishlistID:  wishlistId,
+		Name:        name,
+		Description: description,
+		Link:        link,
+		ImageUrl:    imageURL,
+		Quantity:    quantity,
+		Price:       price,
+	})
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error creating wishlist: %s", err))
+	}
+
+	return c.Redirect(http.StatusFound, fmt.Sprintf("/admin/wishlists/%s", wishlist.ID))
 }
