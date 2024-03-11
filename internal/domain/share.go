@@ -1,4 +1,4 @@
-package views
+package domain
 
 type Share struct {
 	Id       string

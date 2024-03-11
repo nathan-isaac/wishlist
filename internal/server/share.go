@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"whishlist/internal/domain"
 	"whishlist/internal/views"
 )
 
@@ -22,10 +23,10 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
 	}
 
-	wishlistItems := make([]views.Item, len(items))
+	wishlistItems := make([]domain.Item, len(items))
 
 	for i, item := range items {
-		wishlistItems[i] = views.Item{
+		wishlistItems[i] = domain.Item{
 			Id:                item.ID,
 			Name:              item.Name,
 			Link:              item.Link,
@@ -37,10 +38,10 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		}
 	}
 
-	share := views.Share{
+	share := domain.Share{
 		Id:       wishlist.ID,
 		Code:     code,
-		Wishlist: views.ToWishlist(wishlist),
+		Wishlist: domain.ToWishlist(wishlist),
 		Items:    wishlistItems,
 	}
 

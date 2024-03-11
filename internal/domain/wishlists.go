@@ -1,4 +1,4 @@
-package views
+package domain
 
 import (
 	"fmt"

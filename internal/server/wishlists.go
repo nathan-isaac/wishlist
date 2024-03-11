@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"whishlist/internal/domain"
 	"whishlist/internal/gateway"
 	"whishlist/internal/utils"
 	"whishlist/internal/views"
@@ -20,7 +21,7 @@ func (s *Server) WishlistsShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	return views.Render(c, views.WishlistShowView(views.ToWishlist(wishlist)))
+	return views.Render(c, views.WishlistShowView(domain.ToWishlist(wishlist)))
 }
 
 func (s *Server) WishlistsEditHandler(c echo.Context) error {
@@ -32,7 +33,7 @@ func (s *Server) WishlistsEditHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	return views.Render(c, views.WishlistEditView(views.ToWishlist(wishlist)))
+	return views.Render(c, views.WishlistEditView(domain.ToWishlist(wishlist)))
 }
 
 func (s *Server) WishlistsUpdateHandler(c echo.Context) error {
@@ -85,12 +86,12 @@ func (s *Server) WishlistsIndexHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlists: %s", err))
 	}
 
-	wishlistsView := utils.Map(wishlists, func(wishlist gateway.Wishlist) views.Wishlist {
-		return views.ToWishlist(wishlist)
+	wishlistsView := utils.Map(wishlists, func(wishlist gateway.Wishlist) domain.Wishlist {
+		return domain.ToWishlist(wishlist)
 	})
 
 	return views.Render(c, views.WishlistIndexView(
-		views.WishlistIndex{
+		domain.WishlistIndex{
 			NewWishlistURL: "/admin/wishlists/new",
 			Wishlists:      wishlistsView,
 		},
@@ -141,7 +142,7 @@ func (s *Server) ItemsNewHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	return views.Render(c, views.ItemNewView(views.ToWishlist(wishlist)))
+	return views.Render(c, views.ItemNewView(domain.ToWishlist(wishlist)))
 }
 
 func priceToInt(price string) (int64, error) {
