@@ -2,10 +2,10 @@ package server
 
 import (
 	"fmt"
+	"github.com/Rhymond/go-money"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
-	"strings"
 	"whishlist/internal/domain"
 	"whishlist/internal/gateway"
 	"whishlist/internal/utils"
@@ -157,11 +157,6 @@ func (s *Server) ItemsNewHandler(c echo.Context) error {
 	return views.Render(c, views.ItemNewView(domain.ToWishlist(wishlist)))
 }
 
-func priceToInt(price string) (int64, error) {
-	priceWithoutDecimal := strings.Replace(price, ".", "", -1)
-	return strconv.ParseInt(priceWithoutDecimal, 10, 0)
-}
-
 func (s *Server) ItemsPostHandler(c echo.Context) error {
 	wishlistId := c.FormValue("wishlist_id")
 
@@ -175,12 +170,15 @@ func (s *Server) ItemsPostHandler(c echo.Context) error {
 	link := c.FormValue("link")
 	description := c.FormValue("description")
 	imageURL := c.FormValue("image_url")
-	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 0)
-	price, err := priceToInt(c.FormValue("price"))
+	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 64)
+	floatPrice, err := strconv.ParseFloat(c.FormValue("price"), 64)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error parsing quantity or price: %s", err))
 	}
+
+	moneyPrice := money.NewFromFloat(floatPrice, money.USD)
+	intPrice := moneyPrice.Amount()
 
 	id, err := GenerateId()
 
@@ -196,7 +194,7 @@ func (s *Server) ItemsPostHandler(c echo.Context) error {
 		Link:        link,
 		ImageUrl:    imageURL,
 		Quantity:    quantity,
-		Price:       price,
+		Price:       intPrice,
 	})
 
 	if err != nil {
