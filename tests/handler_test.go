@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"testing"
-	"whishlist/internal/server"
+	"wishlist/internal/server"
 )
 
 func TestHandler(t *testing.T) {

@@ -1,4 +1,4 @@
-module whishlist
+module wishlist
 
 go 1.20
 

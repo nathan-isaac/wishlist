@@ -6,10 +6,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
-	"whishlist/internal/domain"
-	"whishlist/internal/gateway"
-	"whishlist/internal/utils"
-	"whishlist/internal/views"
+	"wishlist/internal/domain"
+	"wishlist/internal/gateway"
+	"wishlist/internal/utils"
+	"wishlist/internal/views"
 )
 
 func (s *Server) WishlistsShowHandler(c echo.Context) error {

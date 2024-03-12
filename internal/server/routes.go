@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"whishlist/cmd/web"
+	"wishlist/cmd/web"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {

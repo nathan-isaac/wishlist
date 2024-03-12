@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/joho/godotenv"
 	"log"
-	"whishlist/internal/server"
+	"wishlist/internal/server"
 )
 
 func main() {

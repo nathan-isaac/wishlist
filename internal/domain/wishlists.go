@@ -3,7 +3,7 @@ package domain
 import (
 	"fmt"
 	"github.com/Rhymond/go-money"
-	"whishlist/internal/gateway"
+	"wishlist/internal/gateway"
 )
 
 type WishlistIndex struct {

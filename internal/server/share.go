@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"whishlist/internal/domain"
-	"whishlist/internal/views"
+	"wishlist/internal/domain"
+	"wishlist/internal/views"
 )
 
 func (s *Server) ShareShowHandler(c echo.Context) error {

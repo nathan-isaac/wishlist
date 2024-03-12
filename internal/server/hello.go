@@ -2,7 +2,7 @@ package server
 
 import (
 	"net/http"
-	"whishlist/internal/views"
+	"wishlist/internal/views"
 )
 
 func HelloWebHandler(w http.ResponseWriter, r *http.Request) {
