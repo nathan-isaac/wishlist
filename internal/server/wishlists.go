@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Rhymond/go-money"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"net/http"
 	"strconv"
 	"wishlist/internal/domain"
@@ -202,4 +203,24 @@ func (s *Server) ItemsPostHandler(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusFound, fmt.Sprintf("/admin/wishlists/%s", wishlist.ID))
+}
+
+func (s *Server) ItemsEditHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	log.Info("id: ", id)
+
+	item, err := s.queries.FindItem(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting item: %s", err))
+	}
+
+	wishlist, err := s.queries.FindWishlist(s.ctx, item.WishlistID)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	return views.Render(c, views.ItemEditView(domain.ToWishlist(wishlist), domain.ToItem(item)))
 }

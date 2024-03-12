@@ -113,6 +113,28 @@ func (q *Queries) FilerItemsForWishlist(ctx context.Context, wishlistID string) 
 	return items, nil
 }
 
+const findItem = `-- name: FindItem :one
+SELECT id, wishlist_id, link, name, description, image_url, quantity, price
+FROM wishlist_item
+WHERE id = ?
+`
+
+func (q *Queries) FindItem(ctx context.Context, id string) (WishlistItem, error) {
+	row := q.db.QueryRowContext(ctx, findItem, id)
+	var i WishlistItem
+	err := row.Scan(
+		&i.ID,
+		&i.WishlistID,
+		&i.Link,
+		&i.Name,
+		&i.Description,
+		&i.ImageUrl,
+		&i.Quantity,
+		&i.Price,
+	)
+	return i, err
+}
+
 const findWishlist = `-- name: FindWishlist :one
 SELECT id, name, description, share_code, public
 FROM wishlist

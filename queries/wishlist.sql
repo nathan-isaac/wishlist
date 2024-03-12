@@ -37,3 +37,8 @@ SELECT *
 FROM wishlist_item
 WHERE wishlist_id = ?
 ORDER BY name;
+
+-- name: FindItem :one
+SELECT *
+FROM wishlist_item
+WHERE id = ?;
