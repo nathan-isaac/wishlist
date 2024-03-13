@@ -234,12 +234,6 @@ func (s *Server) ItemsUpdateHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	wishlist, err := s.queries.FindWishlist(s.ctx, item.WishlistID)
-
-	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
-	}
-
 	name := c.FormValue("name")
 	link := c.FormValue("link")
 	description := c.FormValue("description")
@@ -268,5 +262,23 @@ func (s *Server) ItemsUpdateHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error updating wishlist: %s", err))
 	}
 
-	return HxRedirect(c, fmt.Sprintf("/admin/wishlists/%s", wishlist.ID))
+	return HxRedirect(c, fmt.Sprintf("/admin/wishlists/%s", item.WishlistID))
+}
+
+func (s *Server) ItemsDeleteHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	item, err := s.queries.FindItem(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	err = s.queries.DeleteItem(s.ctx, item.ID)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error updating wishlist: %s", err))
+	}
+
+	return HxRedirect(c, fmt.Sprintf("/admin/wishlists/%s", item.WishlistID))
 }

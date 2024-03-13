@@ -52,3 +52,8 @@ set name = ?,
     quantity = ?,
     price = ?
 WHERE id = ?;
+
+-- name: DeleteItem :exec
+DELETE
+FROM wishlist_item
+WHERE id = ?;

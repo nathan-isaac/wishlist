@@ -63,6 +63,17 @@ func (q *Queries) CreateWishlistItem(ctx context.Context, arg CreateWishlistItem
 	return err
 }
 
+const deleteItem = `-- name: DeleteItem :exec
+DELETE
+FROM wishlist_item
+WHERE id = ?
+`
+
+func (q *Queries) DeleteItem(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteItem, id)
+	return err
+}
+
 const deleteWishlist = `-- name: DeleteWishlist :exec
 DELETE
 FROM wishlist

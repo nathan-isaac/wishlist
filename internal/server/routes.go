@@ -40,6 +40,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	admin.POST("/items", s.ItemsPostHandler)
 	admin.GET("/items/:id/edit", s.ItemsEditHandler)
 	admin.PUT("/items/:id", s.ItemsUpdateHandler)
+	admin.DELETE("/items/:id", s.ItemsDeleteHandler)
 
 	return e
 }

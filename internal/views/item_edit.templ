@@ -69,6 +69,13 @@ templ ItemEditView(wishlist domain.Wishlist, item domain.Item) {
 								<button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
 							</div>
 						</form>
+						<div class="px-4 sm:px-0">
+							<h2 class="text-base font-semibold leading-7 text-gray-900">Delete item</h2>
+							<p class="mt-1 text-sm leading-6 text-gray-600">Deleting this item will permanent.</p>
+						</div>
+						<form hx-delete={ item.ShowURL } class="flex items-start md:col-span-2">
+							<button type="submit" class="rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-400">Yes, delete item</button>
+						</form>
 					</div>
 				</div>
 			</div>
