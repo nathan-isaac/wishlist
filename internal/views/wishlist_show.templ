@@ -65,7 +65,9 @@ templ WishlistShowView(wishlist domain.Wishlist, items []domain.Item) {
 					for _, item := range items {
 						<li class="relative flex justify-between gap-x-6 px-4 py-5 sm:px-6">
 							<div class="flex min-w-0 gap-x-4">
-								<img class="size-12 flex-none rounded-lg bg-gray-50" src={ item.ImageUrl } alt="Item photo"/>
+								<div class="size-12 overflow-hidden flex-none rounded-lg">
+									<img class="w-12 h-auto bg-gray-50" src={ item.ImageUrl } alt="Item photo"/>
+								</div>
 								<div class="min-w-0 flex-auto">
 									<p class="text-sm font-semibold leading-6 text-gray-900">
 										{ item.Name }

@@ -26,7 +26,9 @@ templ ShareView(share domain.Share) {
 										{ item.Price } <span class="text-gray-500 font-normal text-sm">estimated</span>
 									</p>
 								</div>
-								<img class="size-24 flex-shrink-0 rounded-lg bg-gray-300" src={ item.ImageUrl } alt="Item photo"/>
+								<div class="overflow-hidden size-24 flex-shrink-0 rounded-lg">
+                                    <img class="w-24 h-auto flex-shrink-0 rounded-lg bg-gray-300" src={ item.ImageUrl } alt="Item photo"/>
+								</div>
 							</div>
 							<div class="flex justify-between">
 								<a href={ templ.URL(item.Link) } class="inline-flex items-center gap-x-1.5 rounded-md bg-emerald-50 px-2.5 py-1.5 text-sm font-semibold text-emerald-600 shadow-sm hover:bg-emerald-100">
