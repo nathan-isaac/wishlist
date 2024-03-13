@@ -224,3 +224,49 @@ func (s *Server) ItemsEditHandler(c echo.Context) error {
 
 	return views.Render(c, views.ItemEditView(domain.ToWishlist(wishlist), domain.ToItem(item)))
 }
+
+func (s *Server) ItemsUpdateHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	item, err := s.queries.FindItem(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	wishlist, err := s.queries.FindWishlist(s.ctx, item.WishlistID)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
+	}
+
+	name := c.FormValue("name")
+	link := c.FormValue("link")
+	description := c.FormValue("description")
+	imageURL := c.FormValue("image_url")
+	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 64)
+	floatPrice, err := strconv.ParseFloat(c.FormValue("price"), 64)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error parsing quantity or price: %s", err))
+	}
+
+	moneyPrice := money.NewFromFloat(floatPrice, money.USD)
+	intPrice := moneyPrice.Amount()
+
+	err = s.queries.UpdateItem(s.ctx, gateway.UpdateItemParams{
+		ID:          item.ID,
+		Name:        name,
+		Description: description,
+		Link:        link,
+		ImageUrl:    imageURL,
+		Quantity:    quantity,
+		Price:       intPrice,
+	})
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error updating wishlist: %s", err))
+	}
+
+	return HxRedirect(c, fmt.Sprintf("/admin/wishlists/%s", wishlist.ID))
+}

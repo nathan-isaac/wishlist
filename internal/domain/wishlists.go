@@ -3,7 +3,6 @@ package domain
 import (
 	"fmt"
 	"github.com/Rhymond/go-money"
-	"github.com/labstack/gommon/log"
 	"strings"
 	"wishlist/internal/gateway"
 )
@@ -35,6 +34,7 @@ type Item struct {
 	PriceValue        string
 	PurchasedQuantity string
 	NeededQuantity    string
+	ShowURL           string
 	EditURL           string
 }
 
@@ -54,8 +54,6 @@ func ToWishlist(wishlist gateway.Wishlist) Wishlist {
 func ToItem(item gateway.WishlistItem) Item {
 	moneyPrice := money.New(item.Price, "USD")
 
-	log.Info("moneyPrice: ", moneyPrice.AsMajorUnits())
-
 	return Item{
 		Id:                item.ID,
 		Name:              item.Name,
@@ -66,6 +64,7 @@ func ToItem(item gateway.WishlistItem) Item {
 		PriceValue:        strings.Replace(moneyPrice.Display(), "$", "", -1),
 		NeededQuantity:    fmt.Sprintf("%d", item.Quantity),
 		PurchasedQuantity: "0",
+		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ID),
 		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ID),
 	}
 }

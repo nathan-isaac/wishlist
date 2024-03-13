@@ -20,47 +20,46 @@ templ ItemEditView(wishlist domain.Wishlist, item domain.Item) {
 							<h2 class="text-base font-semibold leading-7 text-gray-900">Wishlist Item</h2>
 							<p class="mt-1 text-sm leading-6 text-gray-600">Description of wishlist item.</p>
 						</div>
-						<form method="post" action="/admin/items" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-							<input type="hidden" name="wishlist_id" value={ wishlist.ID }/>
+						<form hx-put={ item.ShowURL } class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
 							<div class="px-4 py-6 sm:p-8">
 								<div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 									<div class="sm:col-span-4">
 										<label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
 										<div class="mt-2">
-											<input type="text" name="name" id="name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={item.Name}/>
+											<input type="text" name="name" id="name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" value={ item.Name }/>
 										</div>
 									</div>
 									<div class="col-span-full">
 										<label for="link" class="block text-sm font-medium leading-6 text-gray-900">Product Link</label>
 										<div class="mt-2">
-											<input type="text" name="link" id="link" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="https://amazon.com/item-id" value={item.Link}/>
+											<input type="text" name="link" id="link" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="https://amazon.com/item-id" value={ item.Link }/>
 										</div>
 										<p class="mt-3 text-sm leading-6 text-gray-600">Link to the product you want.</p>
 									</div>
 									<div class="col-span-full">
 										<label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
 										<div class="mt-2">
-											<textarea id="description" name="description" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">{item.Description}</textarea>
+											<textarea id="description" name="description" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">{ item.Description }</textarea>
 										</div>
 										<p class="mt-3 text-sm leading-6 text-gray-600">Describe what this wishlist is for.</p>
 									</div>
 									<div class="col-span-full">
 										<label for="image_url" class="block text-sm font-medium leading-6 text-gray-900">Image URL</label>
 										<div class="mt-2">
-											<input type="text" name="image_url" id="image_url" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="https://amazon.com/image.jpg" value={item.ImageUrl}/>
+											<input type="text" name="image_url" id="image_url" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="https://amazon.com/image.jpg" value={ item.ImageUrl }/>
 										</div>
 									</div>
 									<div class="sm:col-span-1">
 										<label for="quantity" class="block text-sm font-medium leading-6 text-gray-900">Quantity</label>
 										<div class="mt-2">
-											<input type="number" name="quantity" id="quantity" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="1" value={item.NeededQuantity}/>
+											<input type="number" name="quantity" id="quantity" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="1" value={ item.NeededQuantity }/>
 										</div>
 									</div>
 									<div class="sm:col-span-2 sm:col-start-1">
 										<label for="price" class="block text-sm font-medium leading-6 text-gray-900">Average Price</label>
 										<div class="mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
 											<span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm">$</span>
-											<input type="text" name="price" id="price" placeholder="10.99" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" value={item.PriceValue}/>
+											<input type="text" name="price" id="price" placeholder="10.99" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" value={ item.PriceValue }/>
 										</div>
 									</div>
 								</div>

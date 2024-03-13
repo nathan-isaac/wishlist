@@ -208,6 +208,40 @@ func (q *Queries) ListWishlists(ctx context.Context) ([]Wishlist, error) {
 	return items, nil
 }
 
+const updateItem = `-- name: UpdateItem :exec
+UPDATE wishlist_item
+set name = ?,
+    link = ?,
+    description  = ?,
+    image_url = ?,
+    quantity = ?,
+    price = ?
+WHERE id = ?
+`
+
+type UpdateItemParams struct {
+	Name        string
+	Link        string
+	Description string
+	ImageUrl    string
+	Quantity    int64
+	Price       int64
+	ID          string
+}
+
+func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) error {
+	_, err := q.db.ExecContext(ctx, updateItem,
+		arg.Name,
+		arg.Link,
+		arg.Description,
+		arg.ImageUrl,
+		arg.Quantity,
+		arg.Price,
+		arg.ID,
+	)
+	return err
+}
+
 const updateWishlist = `-- name: UpdateWishlist :exec
 UPDATE wishlist
 set name = ?,

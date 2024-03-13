@@ -42,3 +42,13 @@ ORDER BY name;
 SELECT *
 FROM wishlist_item
 WHERE id = ?;
+
+-- name: UpdateItem :exec
+UPDATE wishlist_item
+set name = ?,
+    link = ?,
+    description  = ?,
+    image_url = ?,
+    quantity = ?,
+    price = ?
+WHERE id = ?;

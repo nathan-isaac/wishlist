@@ -39,6 +39,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	admin.GET("/wishlists/:id/items/new", s.ItemsNewHandler)
 	admin.POST("/items", s.ItemsPostHandler)
 	admin.GET("/items/:id/edit", s.ItemsEditHandler)
+	admin.PUT("/items/:id", s.ItemsUpdateHandler)
 
 	return e
 }
