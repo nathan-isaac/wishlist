@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"net/http"
 	"strconv"
+	"strings"
 	"wishlist/internal/domain"
 	"wishlist/internal/gateway"
 	"wishlist/internal/utils"
@@ -158,6 +159,51 @@ func (s *Server) ItemsNewHandler(c echo.Context) error {
 	return views.Render(c, views.ItemNewView(domain.ToWishlist(wishlist)))
 }
 
+type ItemFormInput struct {
+	Name        string
+	Link        string
+	Description string
+	ImageURL    string
+	Quantity    int64
+	Price       int64
+}
+
+func NewItemFormInput(c echo.Context) (ItemFormInput, error) {
+	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 64)
+
+	if err != nil {
+		return ItemFormInput{}, err
+	}
+
+	price, err := parsePriceInput(c.FormValue("price"))
+
+	if err != nil {
+		return ItemFormInput{}, err
+	}
+
+	return ItemFormInput{
+		Name:        strings.Trim(c.FormValue("name"), ""),
+		Link:        strings.Trim(c.FormValue("link"), ""),
+		Description: strings.Trim(c.FormValue("description"), ""),
+		ImageURL:    strings.Trim(c.FormValue("image_url"), ""),
+		Quantity:    quantity,
+		Price:       price,
+	}, nil
+}
+
+func parsePriceInput(price string) (int64, error) {
+	priceReplacer := strings.NewReplacer("$", "", ",", "")
+	price = priceReplacer.Replace(strings.Trim(price, ""))
+	floatPrice, err := strconv.ParseFloat(price, 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	moneyPrice := money.NewFromFloat(floatPrice, money.USD)
+	return moneyPrice.Amount(), nil
+}
+
 func (s *Server) ItemsPostHandler(c echo.Context) error {
 	wishlistId := c.FormValue("wishlist_id")
 
@@ -167,19 +213,11 @@ func (s *Server) ItemsPostHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	name := c.FormValue("name")
-	link := c.FormValue("link")
-	description := c.FormValue("description")
-	imageURL := c.FormValue("image_url")
-	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 64)
-	floatPrice, err := strconv.ParseFloat(c.FormValue("price"), 64)
+	itemInput, err := NewItemFormInput(c)
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("error parsing quantity or price: %s", err))
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error parsing input: %s", err))
 	}
-
-	moneyPrice := money.NewFromFloat(floatPrice, money.USD)
-	intPrice := moneyPrice.Amount()
 
 	id, err := GenerateId()
 
@@ -190,12 +228,12 @@ func (s *Server) ItemsPostHandler(c echo.Context) error {
 	err = s.queries.CreateWishlistItem(s.ctx, gateway.CreateWishlistItemParams{
 		ID:          id,
 		WishlistID:  wishlistId,
-		Name:        name,
-		Description: description,
-		Link:        link,
-		ImageUrl:    imageURL,
-		Quantity:    quantity,
-		Price:       intPrice,
+		Name:        itemInput.Name,
+		Description: itemInput.Description,
+		Link:        itemInput.Link,
+		ImageUrl:    itemInput.ImageURL,
+		Quantity:    itemInput.Quantity,
+		Price:       itemInput.Price,
 	})
 
 	if err != nil {
@@ -234,28 +272,20 @@ func (s *Server) ItemsUpdateHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	name := c.FormValue("name")
-	link := c.FormValue("link")
-	description := c.FormValue("description")
-	imageURL := c.FormValue("image_url")
-	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 64)
-	floatPrice, err := strconv.ParseFloat(c.FormValue("price"), 64)
+	itemInput, err := NewItemFormInput(c)
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("error parsing quantity or price: %s", err))
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error parsing input: %s", err))
 	}
-
-	moneyPrice := money.NewFromFloat(floatPrice, money.USD)
-	intPrice := moneyPrice.Amount()
 
 	err = s.queries.UpdateItem(s.ctx, gateway.UpdateItemParams{
 		ID:          item.ID,
-		Name:        name,
-		Description: description,
-		Link:        link,
-		ImageUrl:    imageURL,
-		Quantity:    quantity,
-		Price:       intPrice,
+		Name:        itemInput.Name,
+		Description: itemInput.Description,
+		Link:        itemInput.Link,
+		ImageUrl:    itemInput.ImageURL,
+		Quantity:    itemInput.Quantity,
+		Price:       itemInput.Price,
 	})
 
 	if err != nil {

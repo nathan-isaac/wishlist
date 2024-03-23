@@ -3,7 +3,6 @@ package domain
 import (
 	"fmt"
 	"github.com/Rhymond/go-money"
-	"strings"
 	"wishlist/internal/gateway"
 )
 
@@ -52,7 +51,16 @@ func ToWishlist(wishlist gateway.Wishlist) Wishlist {
 }
 
 func ToItem(item gateway.WishlistItem) Item {
-	moneyPrice := money.New(item.Price, "USD")
+	moneyPrice := money.New(item.Price, money.USD)
+
+	currency := money.GetCurrency(money.USD)
+	formatter := money.NewFormatter(
+		currency.Fraction,
+		currency.Decimal,
+		currency.Thousand,
+		"",
+		currency.Template,
+	)
 
 	return Item{
 		Id:                item.ID,
@@ -61,7 +69,7 @@ func ToItem(item gateway.WishlistItem) Item {
 		ImageUrl:          item.ImageUrl,
 		Description:       item.Description,
 		Price:             moneyPrice.Display(),
-		PriceValue:        strings.Replace(moneyPrice.Display(), "$", "", -1),
+		PriceValue:        formatter.Format(item.Price),
 		NeededQuantity:    fmt.Sprintf("%d", item.Quantity),
 		PurchasedQuantity: "0",
 		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ID),
