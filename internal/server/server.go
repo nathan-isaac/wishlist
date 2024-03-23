@@ -37,8 +37,9 @@ type Wishlist struct {
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	host := os.Getenv("HOST")
+	database := os.Getenv("DATABASE_URL")
 
-	db, err := sql.Open("sqlite3", "./wishlist.db")
+	db, err := sql.Open("sqlite3", database)
 
 	if err != nil {
 		panic(err)
