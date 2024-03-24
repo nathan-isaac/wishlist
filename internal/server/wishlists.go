@@ -35,7 +35,7 @@ func (s *Server) WishlistsShowHandler(c echo.Context) error {
 		wishlistItems[i] = domain.ToItem(item)
 	}
 
-	return views.Render(c, views.WishlistShowView(domain.ToWishlist(wishlist), wishlistItems))
+	return Render(c, views.WishlistShowView(domain.ToWishlist(wishlist), wishlistItems))
 }
 
 func (s *Server) WishlistsEditHandler(c echo.Context) error {
@@ -47,7 +47,7 @@ func (s *Server) WishlistsEditHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	return views.Render(c, views.WishlistEditView(domain.ToWishlist(wishlist)))
+	return Render(c, views.WishlistEditView(domain.ToWishlist(wishlist)))
 }
 
 func (s *Server) WishlistsUpdateHandler(c echo.Context) error {
@@ -104,7 +104,7 @@ func (s *Server) WishlistsIndexHandler(c echo.Context) error {
 		return domain.ToWishlist(wishlist)
 	})
 
-	return views.Render(c, views.WishlistIndexView(
+	return Render(c, views.WishlistIndexView(
 		domain.WishlistIndex{
 			NewWishlistURL: "/admin/wishlists/new",
 			Wishlists:      wishlistsView,
@@ -113,7 +113,7 @@ func (s *Server) WishlistsIndexHandler(c echo.Context) error {
 }
 
 func (s *Server) WishlistsNewHandler(c echo.Context) error {
-	return views.Render(c, views.WishlistNewView())
+	return Render(c, views.WishlistNewView())
 }
 
 func (s *Server) WishlistsPostHandler(c echo.Context) error {
@@ -156,7 +156,7 @@ func (s *Server) ItemsNewHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	return views.Render(c, views.ItemNewView(domain.ToWishlist(wishlist)))
+	return Render(c, views.ItemNewView(domain.ToWishlist(wishlist)))
 }
 
 type ItemFormInput struct {
@@ -260,7 +260,7 @@ func (s *Server) ItemsEditHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	return views.Render(c, views.ItemEditView(domain.ToWishlist(wishlist), domain.ToItem(item)))
+	return Render(c, views.ItemEditView(domain.ToWishlist(wishlist), domain.ToItem(item)))
 }
 
 func (s *Server) ItemsUpdateHandler(c echo.Context) error {

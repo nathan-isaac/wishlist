@@ -36,5 +36,5 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		Items:    wishlistItems,
 	}
 
-	return views.Render(c, views.ShareView(share))
+	return Render(c, views.ShareView(share))
 }

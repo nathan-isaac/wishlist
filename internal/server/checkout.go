@@ -11,5 +11,5 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 
 	slog.Info("checkout show handler", slog.String("id", id))
 
-	return views.Render(c, views.CheckoutShowView())
+	return Render(c, views.CheckoutShowView())
 }

@@ -1,4 +1,4 @@
-package views
+package server
 
 import (
 	"github.com/a-h/templ"
