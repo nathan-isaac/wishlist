@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Rhymond/go-money"
 	"wishlist/internal/gateway"
+	"wishlist/internal/utils"
 )
 
 type WishlistIndex struct {
@@ -75,4 +76,28 @@ func ToItem(item gateway.WishlistItem) Item {
 		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ID),
 		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ID),
 	}
+}
+
+type FindWishlistResponse struct {
+	Wishlist Wishlist
+	Items    []Item
+}
+
+func (it *App) FindWishlist(id string) (FindWishlistResponse, error) {
+	wishlist, err := it.Queries.FindWishlist(it.Ctx, id)
+
+	if err != nil {
+		return FindWishlistResponse{}, err
+	}
+
+	items, err := it.Queries.FilerItemsForWishlist(it.Ctx, id)
+
+	if err != nil {
+		return FindWishlistResponse{}, err
+	}
+
+	return FindWishlistResponse{
+		Wishlist: ToWishlist(wishlist),
+		Items:    utils.Map(items, ToItem),
+	}, nil
 }

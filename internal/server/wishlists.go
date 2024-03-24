@@ -17,37 +17,25 @@ import (
 func (s *Server) WishlistsShowHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	wishlist, err := s.queries.FindWishlist(s.ctx, id)
+	response, err := s.domain.FindWishlist(id)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	items, err := s.queries.FilerItemsForWishlist(s.ctx, wishlist.ID)
-
-	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
-	}
-
-	wishlistItems := make([]domain.Item, len(items))
-
-	for i, item := range items {
-		wishlistItems[i] = domain.ToItem(item)
-	}
-
-	return Render(c, views.WishlistShowView(domain.ToWishlist(wishlist), wishlistItems))
+	return Render(c, views.WishlistShowView(response.Wishlist, response.Items))
 }
 
 func (s *Server) WishlistsEditHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	wishlist, err := s.queries.FindWishlist(s.ctx, id)
+	response, err := s.domain.FindWishlist(id)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	return Render(c, views.WishlistEditView(domain.ToWishlist(wishlist)))
+	return Render(c, views.WishlistEditView(response.Wishlist))
 }
 
 func (s *Server) WishlistsUpdateHandler(c echo.Context) error {

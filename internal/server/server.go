@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"wishlist/internal/domain"
 	"wishlist/internal/gateway"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -25,6 +26,7 @@ type Server struct {
 	db      *sql.DB
 	ctx     context.Context
 	queries *gateway.Queries
+	domain  *domain.App
 	admin   AdminUser
 }
 
@@ -46,7 +48,6 @@ func NewServer() *http.Server {
 	}
 
 	ctx := context.Background()
-
 	queries := gateway.New(db)
 
 	NewServer := &Server{
@@ -55,6 +56,10 @@ func NewServer() *http.Server {
 		db:      db,
 		ctx:     ctx,
 		queries: queries,
+		domain: &domain.App{
+			Queries: queries,
+			Ctx:     ctx,
+		},
 		admin: AdminUser{
 			Username: os.Getenv("ADMIN_USERNAME"),
 			Password: os.Getenv("ADMIN_PASSWORD"),
