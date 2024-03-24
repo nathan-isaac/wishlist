@@ -20,6 +20,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/share/:code", s.ShareShowHandler)
 
+	e.GET("/checkout/:id", s.CheckoutShowHandler)
+
 	admin := e.Group("/admin")
 
 	admin.Use(middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
