@@ -101,3 +101,51 @@ func (it *App) FindWishlist(id string) (FindWishlistResponse, error) {
 		Items:    utils.Map(items, ToItem),
 	}, nil
 }
+
+type UpdateWishlistParams struct {
+	ID          string
+	Name        string
+	Description string
+}
+
+type UpdateWishlistResponse struct {
+	Wishlist Wishlist
+}
+
+func (it *App) UpdateWishlist(params UpdateWishlistParams) (UpdateWishlistResponse, error) {
+	wishlist, err := it.Queries.FindWishlist(it.Ctx, params.ID)
+
+	if err != nil {
+		return UpdateWishlistResponse{}, err
+	}
+
+	err = it.Queries.UpdateWishlist(it.Ctx, gateway.UpdateWishlistParams{
+		ID:          wishlist.ID,
+		Name:        params.Name,
+		Description: params.Description,
+	})
+
+	if err != nil {
+		return UpdateWishlistResponse{}, err
+	}
+
+	return UpdateWishlistResponse{
+		Wishlist: ToWishlist(wishlist),
+	}, nil
+}
+
+func (it *App) DeleteWishlist(id string) error {
+	wishlist, err := it.Queries.FindWishlist(it.Ctx, id)
+
+	if err != nil {
+		return err
+	}
+
+	err = it.Queries.DeleteWishlist(it.Ctx, wishlist.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -41,38 +41,23 @@ func (s *Server) WishlistsEditHandler(c echo.Context) error {
 func (s *Server) WishlistsUpdateHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	wishlist, err := s.queries.FindWishlist(s.ctx, id)
-
-	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
-	}
-
-	name := c.FormValue("name")
-	description := c.FormValue("description")
-
-	err = s.queries.UpdateWishlist(s.ctx, gateway.UpdateWishlistParams{
-		ID:          wishlist.ID,
-		Name:        name,
-		Description: description,
+	response, err := s.domain.UpdateWishlist(domain.UpdateWishlistParams{
+		ID:          id,
+		Name:        c.FormValue("name"),
+		Description: c.FormValue("description"),
 	})
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error updating wishlist: %s", err))
 	}
 
-	return HxRedirect(c, fmt.Sprintf("/admin/wishlists/%s", wishlist.ID))
+	return HxRedirect(c, fmt.Sprintf("/admin/wishlists/%s", response.Wishlist.ID))
 }
 
 func (s *Server) WishlistsDeleteHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	wishlist, err := s.queries.FindWishlist(s.ctx, id)
-
-	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
-	}
-
-	err = s.queries.DeleteWishlist(s.ctx, wishlist.ID)
+	err := s.domain.DeleteWishlist(id)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error deleting wishlist: %s", err))
