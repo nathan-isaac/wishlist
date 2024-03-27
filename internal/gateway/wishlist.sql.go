@@ -7,11 +7,12 @@ package gateway
 
 import (
 	"context"
+	"time"
 )
 
 const createWishlist = `-- name: CreateWishlist :exec
-INSERT INTO wishlist (id, name, description, share_code, public)
-VALUES (?, ?, ?, ?, ?)
+INSERT INTO wishlist (id, name, description, share_code, public, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateWishlistParams struct {
@@ -20,6 +21,8 @@ type CreateWishlistParams struct {
 	Description string
 	ShareCode   string
 	Public      bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (q *Queries) CreateWishlist(ctx context.Context, arg CreateWishlistParams) error {
@@ -29,13 +32,15 @@ func (q *Queries) CreateWishlist(ctx context.Context, arg CreateWishlistParams) 
 		arg.Description,
 		arg.ShareCode,
 		arg.Public,
+		arg.CreatedAt,
+		arg.UpdatedAt,
 	)
 	return err
 }
 
 const createWishlistItem = `-- name: CreateWishlistItem :exec
-INSERT INTO wishlist_item (id, wishlist_id, name, link, image_url, description, quantity, price)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+INSERT INTO wishlist_item (id, wishlist_id, name, link, image_url, description, quantity, price, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateWishlistItemParams struct {
@@ -47,6 +52,8 @@ type CreateWishlistItemParams struct {
 	Description string
 	Quantity    int64
 	Price       int64
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (q *Queries) CreateWishlistItem(ctx context.Context, arg CreateWishlistItemParams) error {
@@ -59,6 +66,8 @@ func (q *Queries) CreateWishlistItem(ctx context.Context, arg CreateWishlistItem
 		arg.Description,
 		arg.Quantity,
 		arg.Price,
+		arg.CreatedAt,
+		arg.UpdatedAt,
 	)
 	return err
 }
@@ -86,7 +95,7 @@ func (q *Queries) DeleteWishlist(ctx context.Context, id string) error {
 }
 
 const filerItemsForWishlist = `-- name: FilerItemsForWishlist :many
-SELECT id, wishlist_id, link, name, description, image_url, quantity, price
+SELECT id, wishlist_id, link, name, description, image_url, quantity, price, created_at, updated_at
 FROM wishlist_item
 WHERE wishlist_id = ?
 ORDER BY name
@@ -110,6 +119,8 @@ func (q *Queries) FilerItemsForWishlist(ctx context.Context, wishlistID string) 
 			&i.ImageUrl,
 			&i.Quantity,
 			&i.Price,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -125,7 +136,7 @@ func (q *Queries) FilerItemsForWishlist(ctx context.Context, wishlistID string) 
 }
 
 const findItem = `-- name: FindItem :one
-SELECT id, wishlist_id, link, name, description, image_url, quantity, price
+SELECT id, wishlist_id, link, name, description, image_url, quantity, price, created_at, updated_at
 FROM wishlist_item
 WHERE id = ?
 `
@@ -142,14 +153,17 @@ func (q *Queries) FindItem(ctx context.Context, id string) (WishlistItem, error)
 		&i.ImageUrl,
 		&i.Quantity,
 		&i.Price,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const findWishlist = `-- name: FindWishlist :one
-SELECT id, name, description, share_code, public
+SELECT id, name, description, share_code, public, created_at, updated_at
 FROM wishlist
-WHERE id = ? LIMIT 1
+WHERE id = ?
+LIMIT 1
 `
 
 func (q *Queries) FindWishlist(ctx context.Context, id string) (Wishlist, error) {
@@ -161,14 +175,17 @@ func (q *Queries) FindWishlist(ctx context.Context, id string) (Wishlist, error)
 		&i.Description,
 		&i.ShareCode,
 		&i.Public,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const findWishlistByShareCode = `-- name: FindWishlistByShareCode :one
-SELECT id, name, description, share_code, public
+SELECT id, name, description, share_code, public, created_at, updated_at
 FROM wishlist
-WHERE share_code = ? LIMIT 1
+WHERE share_code = ?
+LIMIT 1
 `
 
 func (q *Queries) FindWishlistByShareCode(ctx context.Context, shareCode string) (Wishlist, error) {
@@ -180,12 +197,14 @@ func (q *Queries) FindWishlistByShareCode(ctx context.Context, shareCode string)
 		&i.Description,
 		&i.ShareCode,
 		&i.Public,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const listWishlists = `-- name: ListWishlists :many
-SELECT id, name, description, share_code, public
+SELECT id, name, description, share_code, public, created_at, updated_at
 FROM wishlist
 ORDER BY name
 `
@@ -205,6 +224,8 @@ func (q *Queries) ListWishlists(ctx context.Context) ([]Wishlist, error) {
 			&i.Description,
 			&i.ShareCode,
 			&i.Public,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -221,12 +242,13 @@ func (q *Queries) ListWishlists(ctx context.Context) ([]Wishlist, error) {
 
 const updateItem = `-- name: UpdateItem :exec
 UPDATE wishlist_item
-set name = ?,
-    link = ?,
-    description  = ?,
-    image_url = ?,
-    quantity = ?,
-    price = ?
+set name        = ?,
+    link        = ?,
+    description = ?,
+    image_url   = ?,
+    quantity    = ?,
+    price       = ?,
+    updated_at  = ?
 WHERE id = ?
 `
 
@@ -237,6 +259,7 @@ type UpdateItemParams struct {
 	ImageUrl    string
 	Quantity    int64
 	Price       int64
+	UpdatedAt   time.Time
 	ID          string
 }
 
@@ -248,6 +271,7 @@ func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) error {
 		arg.ImageUrl,
 		arg.Quantity,
 		arg.Price,
+		arg.UpdatedAt,
 		arg.ID,
 	)
 	return err
@@ -255,18 +279,25 @@ func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) error {
 
 const updateWishlist = `-- name: UpdateWishlist :exec
 UPDATE wishlist
-set name = ?,
-    description  = ?
+set name        = ?,
+    description = ?,
+    updated_at  = ?
 WHERE id = ?
 `
 
 type UpdateWishlistParams struct {
 	Name        string
 	Description string
+	UpdatedAt   time.Time
 	ID          string
 }
 
 func (q *Queries) UpdateWishlist(ctx context.Context, arg UpdateWishlistParams) error {
-	_, err := q.db.ExecContext(ctx, updateWishlist, arg.Name, arg.Description, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateWishlist,
+		arg.Name,
+		arg.Description,
+		arg.UpdatedAt,
+		arg.ID,
+	)
 	return err
 }

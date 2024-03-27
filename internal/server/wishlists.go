@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 	"wishlist/internal/domain"
 	"wishlist/internal/gateway"
 	"wishlist/internal/utils"
@@ -89,7 +90,7 @@ func (s *Server) WishlistsNewHandler(c echo.Context) error {
 	return Render(c, views.WishlistNewView())
 }
 
-func (s *Server) WishlistsPostHandler(c echo.Context) error {
+func (s *Server) WishlistsCreateHandler(c echo.Context) error {
 	name := c.FormValue("name")
 	description := c.FormValue("description")
 
@@ -111,6 +112,8 @@ func (s *Server) WishlistsPostHandler(c echo.Context) error {
 		Description: description,
 		ShareCode:   shareId,
 		Public:      false,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	})
 
 	if err != nil {
@@ -177,7 +180,7 @@ func parsePriceInput(price string) (int64, error) {
 	return moneyPrice.Amount(), nil
 }
 
-func (s *Server) ItemsPostHandler(c echo.Context) error {
+func (s *Server) ItemsCreateHandler(c echo.Context) error {
 	wishlistId := c.FormValue("wishlist_id")
 
 	wishlist, err := s.queries.FindWishlist(s.ctx, wishlistId)
@@ -207,6 +210,8 @@ func (s *Server) ItemsPostHandler(c echo.Context) error {
 		ImageUrl:    itemInput.ImageURL,
 		Quantity:    itemInput.Quantity,
 		Price:       itemInput.Price,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	})
 
 	if err != nil {
@@ -259,6 +264,7 @@ func (s *Server) ItemsUpdateHandler(c echo.Context) error {
 		ImageUrl:    itemInput.ImageURL,
 		Quantity:    itemInput.Quantity,
 		Price:       itemInput.Price,
+		UpdatedAt:   time.Now(),
 	})
 
 	if err != nil {

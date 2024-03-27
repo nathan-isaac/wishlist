@@ -8,13 +8,34 @@ import (
 	"time"
 )
 
-type Address struct {
-	ID      string
-	Street  string
-	City    string
-	State   string
-	Zip     string
-	Country string
+type Checkout struct {
+	ID         string
+	WishlistID string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+type CheckoutItem struct {
+	ID             string
+	CheckoutID     string
+	WishlistItemID string
+	Quantity       int64
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+}
+
+type CheckoutResponse struct {
+	ID             string
+	CheckoutID     string
+	Name           string
+	AddressLineOne string
+	AddressLineTwo string
+	City           string
+	State          string
+	Zip            string
+	Message        string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 type Wishlist struct {
@@ -23,11 +44,8 @@ type Wishlist struct {
 	Description string
 	ShareCode   string
 	Public      bool
-}
-
-type WishlistAddress struct {
-	ID         string
-	WishlistID string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type WishlistItem struct {
@@ -39,14 +57,6 @@ type WishlistItem struct {
 	ImageUrl    string
 	Quantity    int64
 	Price       int64
-}
-
-type WishlistPurchase struct {
-	ID             string
-	WishlistItemID string
-	BuyerName      string
-	Quantity       int64
-	BoughtAt       time.Time
-	BuyerEmail     string
-	BuyerNotes     string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

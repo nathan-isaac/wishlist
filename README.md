@@ -22,7 +22,7 @@ ADMIN_PASSWORD=admin
 ## Database
 
 ```bash
-GOOSE_MIGRATION_DIR=schema GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=./wishlist.db goose up
+GOOSE_MIGRATION_DIR=schema GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=.wishlist/wishlist.db goose up
 ```
 
 ## Prerequisites

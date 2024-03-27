@@ -31,7 +31,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	admin.GET("/wishlists", s.WishlistsIndexHandler)
-	admin.POST("/wishlists", s.WishlistsPostHandler)
+	admin.POST("/wishlists", s.WishlistsCreateHandler)
 	admin.GET("/wishlists/new", s.WishlistsNewHandler)
 	admin.GET("/wishlists/:id", s.WishlistsShowHandler)
 	admin.GET("/wishlists/:id/edit", s.WishlistsEditHandler)
@@ -39,7 +39,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	admin.DELETE("/wishlists/:id", s.WishlistsDeleteHandler)
 
 	admin.GET("/wishlists/:id/items/new", s.ItemsNewHandler)
-	admin.POST("/items", s.ItemsPostHandler)
+	admin.POST("/items", s.ItemsCreateHandler)
 	admin.GET("/items/:id/edit", s.ItemsEditHandler)
 	admin.PUT("/items/:id", s.ItemsUpdateHandler)
 	admin.DELETE("/items/:id", s.ItemsDeleteHandler)

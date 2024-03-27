@@ -1,12 +1,14 @@
 -- name: FindWishlist :one
 SELECT *
 FROM wishlist
-WHERE id = ? LIMIT 1;
+WHERE id = ?
+LIMIT 1;
 
 -- name: FindWishlistByShareCode :one
 SELECT *
 FROM wishlist
-WHERE share_code = ? LIMIT 1;
+WHERE share_code = ?
+LIMIT 1;
 
 -- name: ListWishlists :many
 SELECT *
@@ -14,13 +16,14 @@ FROM wishlist
 ORDER BY name;
 
 -- name: CreateWishlist :exec
-INSERT INTO wishlist (id, name, description, share_code, public)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO wishlist (id, name, description, share_code, public, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?);
 
 -- name: UpdateWishlist :exec
 UPDATE wishlist
-set name = ?,
-    description  = ?
+set name        = ?,
+    description = ?,
+    updated_at  = ?
 WHERE id = ?;
 
 -- name: DeleteWishlist :exec
@@ -29,8 +32,8 @@ FROM wishlist
 WHERE id = ?;
 
 -- name: CreateWishlistItem :exec
-INSERT INTO wishlist_item (id, wishlist_id, name, link, image_url, description, quantity, price)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO wishlist_item (id, wishlist_id, name, link, image_url, description, quantity, price, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: FilerItemsForWishlist :many
 SELECT *
@@ -45,12 +48,13 @@ WHERE id = ?;
 
 -- name: UpdateItem :exec
 UPDATE wishlist_item
-set name = ?,
-    link = ?,
-    description  = ?,
-    image_url = ?,
-    quantity = ?,
-    price = ?
+set name        = ?,
+    link        = ?,
+    description = ?,
+    image_url   = ?,
+    quantity    = ?,
+    price       = ?,
+    updated_at  = ?
 WHERE id = ?;
 
 -- name: DeleteItem :exec

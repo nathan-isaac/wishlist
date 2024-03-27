@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 	"github.com/Rhymond/go-money"
+	"time"
 	"wishlist/internal/gateway"
 	"wishlist/internal/utils"
 )
@@ -123,6 +124,7 @@ func (it *App) UpdateWishlist(params UpdateWishlistParams) (UpdateWishlistRespon
 		ID:          wishlist.ID,
 		Name:        params.Name,
 		Description: params.Description,
+		UpdatedAt:   time.Now(),
 	})
 
 	if err != nil {
