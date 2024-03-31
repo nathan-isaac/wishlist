@@ -5,19 +5,19 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"wishlist/internal/domain"
-	"wishlist/internal/views"
+	"wishlist/internal/views/share"
 )
 
 func (s *Server) ShareShowHandler(c echo.Context) error {
 	code := c.Param("code")
 
-	wishlist, err := s.queries.FindWishlistByShareCode(s.ctx, code)
+	wishlist, err := s.queries.FindListByShareCode(s.ctx, code)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	items, err := s.queries.FilerItemsForWishlist(s.ctx, wishlist.ID)
+	items, err := s.queries.FilerItemsForList(s.ctx, wishlist.ID)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
@@ -29,12 +29,10 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		wishlistItems[i] = domain.ToItem(item)
 	}
 
-	share := domain.Share{
-		Id:       wishlist.ID,
-		Code:     code,
-		Wishlist: domain.ToWishlist(wishlist),
-		Items:    wishlistItems,
-	}
-
-	return Render(c, views.ShareView(share))
+	return Render(c, share.ShareView(domain.Share{
+		Id:    wishlist.ID,
+		Code:  code,
+		List:  domain.ToList(wishlist),
+		Items: wishlistItems,
+	}))
 }

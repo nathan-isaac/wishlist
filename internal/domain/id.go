@@ -1,4 +1,4 @@
-package server
+package domain
 
 import (
 	gonanoid "github.com/matoous/go-nanoid/v2"

@@ -1,15 +1,16 @@
-package views
+package share
 
 import (
 	"wishlist/internal/domain"
+	"wishlist/internal/views/layout"
 )
 
 templ ShareView(share domain.Share) {
-	@Base() {
+	@layout.Base() {
 		<div class="container">
 			<div class="py-24 text-center">
-				<h1 class="text-4xl font-bold tracking-tight text-gray-900">{ share.Wishlist.Name }</h1>
-				<p class="mx-auto mt-4 max-w-3xl text-base text-gray-500">{ share.Wishlist.Description }</p>
+				<h1 class="text-4xl font-bold tracking-tight text-gray-900">{ share.List.Name }</h1>
+				<p class="mx-auto mt-4 max-w-3xl text-base text-gray-500">{ share.List.Description }</p>
 			</div>
 			<div class="pb-24">
 				<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

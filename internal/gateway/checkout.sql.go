@@ -11,21 +11,21 @@ import (
 )
 
 const createCheckout = `-- name: CreateCheckout :exec
-INSERT INTO checkout (id, wishlist_id, created_at, updated_at)
+INSERT INTO checkout (id, list_id, created_at, updated_at)
 VALUES (?, ?, ?, ?)
 `
 
 type CreateCheckoutParams struct {
-	ID         string
-	WishlistID string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID        string
+	ListID    string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (q *Queries) CreateCheckout(ctx context.Context, arg CreateCheckoutParams) error {
 	_, err := q.db.ExecContext(ctx, createCheckout,
 		arg.ID,
-		arg.WishlistID,
+		arg.ListID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 	)
@@ -33,24 +33,24 @@ func (q *Queries) CreateCheckout(ctx context.Context, arg CreateCheckoutParams) 
 }
 
 const createCheckoutItem = `-- name: CreateCheckoutItem :exec
-INSERT INTO checkout_item (id, checkout_id, wishlist_item_id, quantity, created_at, updated_at)
+INSERT INTO checkout_item (id, checkout_id, list_item_id, quantity, created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?)
 `
 
 type CreateCheckoutItemParams struct {
-	ID             string
-	CheckoutID     string
-	WishlistItemID string
-	Quantity       int64
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID         string
+	CheckoutID string
+	ListItemID string
+	Quantity   int64
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 func (q *Queries) CreateCheckoutItem(ctx context.Context, arg CreateCheckoutItemParams) error {
 	_, err := q.db.ExecContext(ctx, createCheckoutItem,
 		arg.ID,
 		arg.CheckoutID,
-		arg.WishlistItemID,
+		arg.ListItemID,
 		arg.Quantity,
 		arg.CreatedAt,
 		arg.UpdatedAt,

@@ -1,9 +1,9 @@
 -- name: CreateCheckout :exec
-INSERT INTO checkout (id, wishlist_id, created_at, updated_at)
+INSERT INTO checkout (id, list_id, created_at, updated_at)
 VALUES (?, ?, ?, ?);
 
 -- name: CreateCheckoutItem :exec
-INSERT INTO checkout_item (id, checkout_id, wishlist_item_id, quantity, created_at, updated_at)
+INSERT INTO checkout_item (id, checkout_id, list_item_id, quantity, created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?);
 
 -- name: CreateCheckoutResponse :exec

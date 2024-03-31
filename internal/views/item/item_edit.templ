@@ -1,12 +1,12 @@
-
-package views
+package item
 
 import (
 	"wishlist/internal/domain"
+	"wishlist/internal/views/layout"
 )
 
-templ ItemEditView(wishlist domain.Wishlist, item domain.Item) {
-	@AdminBase() {
+templ ItemEditView(wishlist domain.List, item domain.Item) {
+	@layout.AdminBase() {
 		<header>
 			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">Edit Item</h1>

@@ -8,12 +8,12 @@ import (
 	"wishlist/internal/utils"
 )
 
-type WishlistIndex struct {
+type ListIndex struct {
 	NewWishlistURL string
-	Wishlists      []Wishlist
+	Lists          []List
 }
 
-type Wishlist struct {
+type List struct {
 	ID          string
 	Name        string
 	Owner       string
@@ -39,20 +39,20 @@ type Item struct {
 	EditURL           string
 }
 
-func ToWishlist(wishlist gateway.Wishlist) Wishlist {
-	return Wishlist{
-		ID:          wishlist.ID,
-		Name:        wishlist.Name,
-		Description: wishlist.Description,
-		EditURL:     fmt.Sprintf("/admin/wishlists/%s/edit", wishlist.ID),
-		ShowURL:     fmt.Sprintf("/admin/wishlists/%s", wishlist.ID),
-		ShareURL:    fmt.Sprintf("/share/%s", wishlist.ShareCode),
-		NewItemURL:  fmt.Sprintf("/admin/wishlists/%s/items/new", wishlist.ID),
-		ShareCode:   wishlist.ShareCode,
+func ToList(list gateway.List) List {
+	return List{
+		ID:          list.ID,
+		Name:        list.Name,
+		Description: list.Description,
+		EditURL:     fmt.Sprintf("/admin/lists/%s/edit", list.ID),
+		ShowURL:     fmt.Sprintf("/admin/lists/%s", list.ID),
+		ShareURL:    fmt.Sprintf("/share/%s", list.ShareCode),
+		NewItemURL:  fmt.Sprintf("/admin/lists/%s/items/new", list.ID),
+		ShareCode:   list.ShareCode,
 	}
 }
 
-func ToItem(item gateway.WishlistItem) Item {
+func ToItem(item gateway.ListItem) Item {
 	moneyPrice := money.New(item.Price, money.USD)
 
 	currency := money.GetCurrency(money.USD)
@@ -79,48 +79,48 @@ func ToItem(item gateway.WishlistItem) Item {
 	}
 }
 
-type FindWishlistResponse struct {
-	Wishlist Wishlist
-	Items    []Item
+type FindListResponse struct {
+	List  List
+	Items []Item
 }
 
-func (it *App) FindWishlist(id string) (FindWishlistResponse, error) {
-	wishlist, err := it.Queries.FindWishlist(it.Ctx, id)
+func (it *App) FindList(id string) (FindListResponse, error) {
+	wishlist, err := it.Queries.FindList(it.Ctx, id)
 
 	if err != nil {
-		return FindWishlistResponse{}, err
+		return FindListResponse{}, err
 	}
 
-	items, err := it.Queries.FilerItemsForWishlist(it.Ctx, id)
+	items, err := it.Queries.FilerItemsForList(it.Ctx, id)
 
 	if err != nil {
-		return FindWishlistResponse{}, err
+		return FindListResponse{}, err
 	}
 
-	return FindWishlistResponse{
-		Wishlist: ToWishlist(wishlist),
-		Items:    utils.Map(items, ToItem),
+	return FindListResponse{
+		List:  ToList(wishlist),
+		Items: utils.Map(items, ToItem),
 	}, nil
 }
 
-type UpdateWishlistParams struct {
+type UpdateListParams struct {
 	ID          string
 	Name        string
 	Description string
 }
 
-type UpdateWishlistResponse struct {
-	Wishlist Wishlist
+type UpdateListResponse struct {
+	Wishlist List
 }
 
-func (it *App) UpdateWishlist(params UpdateWishlistParams) (UpdateWishlistResponse, error) {
-	wishlist, err := it.Queries.FindWishlist(it.Ctx, params.ID)
+func (it *App) UpdateWishlist(params UpdateListParams) (UpdateListResponse, error) {
+	wishlist, err := it.Queries.FindList(it.Ctx, params.ID)
 
 	if err != nil {
-		return UpdateWishlistResponse{}, err
+		return UpdateListResponse{}, err
 	}
 
-	err = it.Queries.UpdateWishlist(it.Ctx, gateway.UpdateWishlistParams{
+	err = it.Queries.UpdateList(it.Ctx, gateway.UpdateListParams{
 		ID:          wishlist.ID,
 		Name:        params.Name,
 		Description: params.Description,
@@ -128,22 +128,22 @@ func (it *App) UpdateWishlist(params UpdateWishlistParams) (UpdateWishlistRespon
 	})
 
 	if err != nil {
-		return UpdateWishlistResponse{}, err
+		return UpdateListResponse{}, err
 	}
 
-	return UpdateWishlistResponse{
-		Wishlist: ToWishlist(wishlist),
+	return UpdateListResponse{
+		Wishlist: ToList(wishlist),
 	}, nil
 }
 
 func (it *App) DeleteWishlist(id string) error {
-	wishlist, err := it.Queries.FindWishlist(it.Ctx, id)
+	list, err := it.Queries.FindList(it.Ctx, id)
 
 	if err != nil {
 		return err
 	}
 
-	err = it.Queries.DeleteWishlist(it.Ctx, wishlist.ID)
+	err = it.Queries.DeleteList(it.Ctx, list.ID)
 
 	if err != nil {
 		return err

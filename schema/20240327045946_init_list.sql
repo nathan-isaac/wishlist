@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE wishlist
+CREATE TABLE list
 (
     id          TEXT PRIMARY KEY,
     name        TEXT        NOT NULL,
@@ -10,10 +10,10 @@ CREATE TABLE wishlist
     created_at  TIMESTAMP   NOT NULL,
     updated_at  TIMESTAMP   NOT NULL
 );
-CREATE TABLE wishlist_item
+CREATE TABLE list_item
 (
     id          TEXT PRIMARY KEY,
-    wishlist_id TEXT      NOT NULL,
+    list_id TEXT      NOT NULL,
     link        TEXT      NOT NULL,
     name        TEXT      NOT NULL,
     description TEXT      NOT NULL,
@@ -22,12 +22,12 @@ CREATE TABLE wishlist_item
     price       INTEGER   NOT NULL,
     created_at  TIMESTAMP NOT NULL,
     updated_at  TIMESTAMP NOT NULL,
-    FOREIGN KEY (wishlist_id) REFERENCES wishlist (id)
+    FOREIGN KEY (list_id) REFERENCES list (id)
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE wishlist;
-DROP TABLE wishlist_item;
+DROP TABLE list;
+DROP TABLE list_item;
 -- +goose StatementEnd

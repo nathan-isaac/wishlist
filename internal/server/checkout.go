@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/labstack/echo/v4"
 	"log/slog"
-	"wishlist/internal/views"
+	"wishlist/internal/views/checkout"
 )
 
 func (s *Server) CheckoutShowHandler(c echo.Context) error {
@@ -11,7 +11,7 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 
 	slog.Info("checkout show handler", slog.String("id", id))
 
-	return Render(c, views.CheckoutShowView())
+	return Render(c, checkout.CheckoutShowView())
 }
 
 func (s *Server) CheckoutCreateHandler(c echo.Context) error {
@@ -23,7 +23,7 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 	// create checkout database records
 	// redirect to show view
 
-	return Render(c, views.CheckoutShowView())
+	return Render(c, checkout.CheckoutShowView())
 }
 
 // how does a user cancel a checkout?

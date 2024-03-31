@@ -3,10 +3,10 @@
 CREATE TABLE checkout
 (
     id          TEXT PRIMARY KEY,
-    wishlist_id TEXT      NOT NULL,
+    list_id TEXT      NOT NULL,
     created_at  TIMESTAMP NOT NULL,
     updated_at  TIMESTAMP NOT NULL,
-    FOREIGN KEY (wishlist_id) REFERENCES wishlist (id)
+    FOREIGN KEY (list_id) REFERENCES list (id)
 );
 create table checkout_response
 (
@@ -27,12 +27,12 @@ create table checkout_item
 (
     id               TEXT PRIMARY KEY,
     checkout_id      TEXT      NOT NULL,
-    wishlist_item_id TEXT      NOT NULL,
+    list_item_id TEXT      NOT NULL,
     quantity         INTEGER   NOT NULL,
     created_at       TIMESTAMP NOT NULL,
     updated_at       TIMESTAMP NOT NULL,
     FOREIGN KEY (checkout_id) REFERENCES checkout (id),
-    FOREIGN KEY (wishlist_item_id) REFERENCES wishlist_item (id)
+    FOREIGN KEY (list_item_id) REFERENCES list_item (id)
 );
 -- +goose StatementEnd
 

@@ -9,19 +9,19 @@ import (
 )
 
 type Checkout struct {
-	ID         string
-	WishlistID string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID        string
+	ListID    string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type CheckoutItem struct {
-	ID             string
-	CheckoutID     string
-	WishlistItemID string
-	Quantity       int64
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID         string
+	CheckoutID string
+	ListItemID string
+	Quantity   int64
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type CheckoutResponse struct {
@@ -38,7 +38,7 @@ type CheckoutResponse struct {
 	UpdatedAt      time.Time
 }
 
-type Wishlist struct {
+type List struct {
 	ID          string
 	Name        string
 	Description string
@@ -48,9 +48,9 @@ type Wishlist struct {
 	UpdatedAt   time.Time
 }
 
-type WishlistItem struct {
+type ListItem struct {
 	ID          string
-	WishlistID  string
+	ListID      string
 	Link        string
 	Name        string
 	Description string

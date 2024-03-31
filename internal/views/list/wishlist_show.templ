@@ -1,12 +1,13 @@
 
-package views
+package list
 
 import (
 	"wishlist/internal/domain"
+	"wishlist/internal/views/layout"
 )
 
-templ WishlistShowView(wishlist domain.Wishlist, items []domain.Item) {
-	@AdminBase() {
+templ WishlistShowView(wishlist domain.List, items []domain.Item) {
+	@layout.AdminBase() {
 		<header>
 			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">Wishlist</h1>

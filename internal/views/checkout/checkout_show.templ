@@ -1,8 +1,11 @@
+package checkout
 
-package views
+import (
+	"wishlist/internal/views/layout"
+)
 
 templ CheckoutShowView() {
-	@Base() {
+	@layout.Base() {
 		<div class="bg-white min-h-full">
 			<header class="hidden flex items-center justify-between px-4 py-10 sm:px-6 sm:py-8 lg:px-8">
 				<div class="text-xl">Wishlist</div>
