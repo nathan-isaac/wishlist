@@ -6,7 +6,7 @@ import (
 	"wishlist/internal/views/layout"
 )
 
-templ ItemNewView(wishlist domain.List) {
+templ ItemNewView(list domain.List) {
 	@layout.AdminBase() {
 		<header>
 			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -22,7 +22,7 @@ templ ItemNewView(wishlist domain.List) {
 							<p class="mt-1 text-sm leading-6 text-gray-600">Description of wishlist item.</p>
 						</div>
 						<form method="post" action="/admin/items" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-							<input type="hidden" name="wishlist_id" value={ wishlist.ID }/>
+							<input type="hidden" name="wishlist_id" value={ list.ID }/>
 							<div class="px-4 py-6 sm:p-8">
 								<div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 									<div class="sm:col-span-4">
@@ -67,7 +67,7 @@ templ ItemNewView(wishlist domain.List) {
 								</div>
 							</div>
 							<div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-								<a href={ templ.URL(wishlist.ShowURL) } class="text-sm font-semibold leading-6 text-gray-900">Cancel</a>
+								<a href={ templ.URL(list.ShowURL) } class="text-sm font-semibold leading-6 text-gray-900">Cancel</a>
 								<button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
 							</div>
 						</form>

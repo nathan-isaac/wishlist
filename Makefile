@@ -30,6 +30,11 @@ templ_fmt:
 	@echo "Formatting templates..."
 	@templ fmt ./internal/views
 
+templ_clean:
+	@echo "Cleaning templates..."
+	@find ./internal/views -type f -name "*_templ.go" -delete
+	@find ./internal/views -type f -name "*_templ.txt" -delete
+
 # Run the application
 run:
 	@go run cmd/api/main.go
@@ -61,4 +66,4 @@ watch:
 	    fi; \
 	fi
 
-.PHONY: all build run test clean tailwind templ watch sqlc templ_fmt build_dev
+.PHONY: all build run test clean tailwind templ watch sqlc templ_fmt templ_clean build_dev
