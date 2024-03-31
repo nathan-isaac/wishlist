@@ -21,6 +21,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e.GET("/share/:code", s.ShareShowHandler)
 
 	e.GET("/checkout/:id", s.CheckoutShowHandler)
+	e.POST("/checkout", s.CheckoutCreateHandler)
 
 	admin := e.Group("/admin")
 

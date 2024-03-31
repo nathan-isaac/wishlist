@@ -25,20 +25,6 @@ type List struct {
 	ShareCode   string
 }
 
-type Item struct {
-	Id                string
-	Link              string
-	ImageUrl          string
-	Description       string
-	Name              string
-	Price             string
-	PriceValue        string
-	PurchasedQuantity string
-	NeededQuantity    string
-	ShowURL           string
-	EditURL           string
-}
-
 func ToList(list gateway.List) List {
 	return List{
 		ID:          list.ID,
@@ -50,6 +36,22 @@ func ToList(list gateway.List) List {
 		NewItemURL:  fmt.Sprintf("/admin/lists/%s/items/new", list.ID),
 		ShareCode:   list.ShareCode,
 	}
+}
+
+type Item struct {
+	Id                string
+	ListId            string
+	Link              string
+	ImageUrl          string
+	Description       string
+	Name              string
+	Price             string
+	PriceValue        string
+	PurchasedQuantity string
+	NeededQuantity    string
+	ShowURL           string
+	CheckoutUrl       string
+	EditURL           string
 }
 
 func ToItem(item gateway.ListItem) Item {
@@ -66,6 +68,7 @@ func ToItem(item gateway.ListItem) Item {
 
 	return Item{
 		Id:                item.ID,
+		ListId:            item.ListID,
 		Name:              item.Name,
 		Link:              item.Link,
 		ImageUrl:          item.ImageUrl,
@@ -76,6 +79,7 @@ func ToItem(item gateway.ListItem) Item {
 		PurchasedQuantity: "0",
 		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ID),
 		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ID),
+		CheckoutUrl:       "/checkout",
 	}
 }
 

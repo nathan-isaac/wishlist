@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"wishlist/internal/domain"
+	"wishlist/internal/utils"
 	"wishlist/internal/views/share"
 )
 
@@ -23,16 +24,10 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
 	}
 
-	wishlistItems := make([]domain.Item, len(items))
-
-	for i, item := range items {
-		wishlistItems[i] = domain.ToItem(item)
-	}
-
 	return Render(c, share.ShareView(domain.Share{
 		Id:    wishlist.ID,
 		Code:  code,
 		List:  domain.ToList(wishlist),
-		Items: wishlistItems,
+		Items: utils.Map(items, domain.ToItem),
 	}))
 }
