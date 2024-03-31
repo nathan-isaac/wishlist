@@ -93,3 +93,87 @@ func (q *Queries) CreateCheckoutResponse(ctx context.Context, arg CreateCheckout
 	)
 	return err
 }
+
+const filterCheckoutItems = `-- name: FilterCheckoutItems :many
+SELECT checkout_item.id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
+FROM checkout_item
+join list_item on checkout_item.list_item_id = list_item.id
+WHERE checkout_id = ?
+`
+
+type FilterCheckoutItemsRow struct {
+	CheckoutItem CheckoutItem
+	ListItem     ListItem
+}
+
+func (q *Queries) FilterCheckoutItems(ctx context.Context, checkoutID string) ([]FilterCheckoutItemsRow, error) {
+	rows, err := q.db.QueryContext(ctx, filterCheckoutItems, checkoutID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FilterCheckoutItemsRow
+	for rows.Next() {
+		var i FilterCheckoutItemsRow
+		if err := rows.Scan(
+			&i.CheckoutItem.ID,
+			&i.CheckoutItem.CheckoutID,
+			&i.CheckoutItem.ListItemID,
+			&i.CheckoutItem.Quantity,
+			&i.CheckoutItem.CreatedAt,
+			&i.CheckoutItem.UpdatedAt,
+			&i.ListItem.ID,
+			&i.ListItem.ListID,
+			&i.ListItem.Link,
+			&i.ListItem.Name,
+			&i.ListItem.Description,
+			&i.ListItem.ImageUrl,
+			&i.ListItem.Quantity,
+			&i.ListItem.Price,
+			&i.ListItem.CreatedAt,
+			&i.ListItem.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findCheckout = `-- name: FindCheckout :one
+SELECT checkout.id, checkout.list_id, checkout.created_at, checkout.updated_at, list.id, list.name, list.description, list.share_code, list.public, list.created_at, list.updated_at
+FROM checkout
+JOIN list on checkout.list_id = list.id
+WHERE checkout.id = ?
+LIMIT 1
+`
+
+type FindCheckoutRow struct {
+	Checkout Checkout
+	List     List
+}
+
+func (q *Queries) FindCheckout(ctx context.Context, id string) (FindCheckoutRow, error) {
+	row := q.db.QueryRowContext(ctx, findCheckout, id)
+	var i FindCheckoutRow
+	err := row.Scan(
+		&i.Checkout.ID,
+		&i.Checkout.ListID,
+		&i.Checkout.CreatedAt,
+		&i.Checkout.UpdatedAt,
+		&i.List.ID,
+		&i.List.Name,
+		&i.List.Description,
+		&i.List.ShareCode,
+		&i.List.Public,
+		&i.List.CreatedAt,
+		&i.List.UpdatedAt,
+	)
+	return i, err
+}

@@ -7,6 +7,7 @@ import (
 	"time"
 	"wishlist/internal/domain"
 	"wishlist/internal/gateway"
+	"wishlist/internal/utils"
 	"wishlist/internal/views/checkout"
 )
 
@@ -15,7 +16,37 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 
 	slog.Info("checkout show handler", slog.String("id", id))
 
-	return Render(c, checkout.CheckoutShowView())
+	checkoutRecord, err := s.queries.FindCheckout(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusNotFound, "checkout not found")
+	}
+
+	itemRecords, err := s.queries.FilterCheckoutItems(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error fetching checkout items")
+	}
+
+	return Render(c, checkout.CheckoutShowView(checkout.CheckoutShowParams{
+		Checkout: domain.Checkout{
+			ID:        checkoutRecord.Checkout.ID,
+			CreatedAt: checkoutRecord.Checkout.CreatedAt,
+			UpdatedAt: checkoutRecord.Checkout.UpdatedAt,
+			List:      domain.ToList(checkoutRecord.List),
+			CheckoutItems: utils.Map(itemRecords, func(t gateway.FilterCheckoutItemsRow) domain.CheckoutItem {
+				return domain.CheckoutItem{
+					ID:         t.CheckoutItem.ID,
+					CheckoutID: t.CheckoutItem.CheckoutID,
+					Quantity:   t.CheckoutItem.Quantity,
+					CreatedAt:  t.CheckoutItem.CreatedAt,
+					UpdatedAt:  t.CheckoutItem.UpdatedAt,
+					Item:       domain.ToItem(t.ListItem),
+				}
+			}),
+			Response: domain.CheckoutResponse{},
+		},
+	}))
 }
 
 type CheckoutCreateRequest struct {

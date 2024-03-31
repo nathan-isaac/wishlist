@@ -2,9 +2,14 @@ package checkout
 
 import (
 	"wishlist/internal/views/layout"
+	"wishlist/internal/domain"
 )
 
-templ CheckoutShowView() {
+type CheckoutShowParams struct {
+	Checkout domain.Checkout
+}
+
+templ CheckoutShowView(params CheckoutShowParams) {
 	@layout.Base() {
 		<div class="bg-white min-h-full">
 			<header class="hidden flex items-center justify-between px-4 py-10 sm:px-6 sm:py-8 lg:px-8">
@@ -12,59 +17,62 @@ templ CheckoutShowView() {
 			</header>
 			<div class="container">
 				<div class="py-24 text-center">
-					<h1 class="text-4xl font-bold tracking-tight text-gray-900">Nathan & Lindsay's Baby Registry</h1>
-					<p class="mx-auto mt-4 max-w-3xl text-base text-gray-500">We are expecting our baby in July.</p>
+					<h1 class="text-4xl font-bold tracking-tight text-gray-900">{ params.Checkout.List.Name }</h1>
+					<p class="mx-auto mt-4 max-w-3xl text-base text-gray-500">{ params.Checkout.List.Description }</p>
 				</div>
 			</div>
 			<main class="mx-auto max-w-7xl px-4 pb-16 pt-4 sm:px-6 sm:pb-24 sm:pt-8 lg:px-8 xl:px-2 xl:pt-14">
-				<h1 class="sr-only">Checkout</h1>
+				<h2 class="sr-only">Checkout</h2>
 				<div class="mx-auto grid max-w-lg grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
 					<div class="mx-auto w-full max-w-lg">
-						<h2 class="sr-only">Order summary</h2>
-						<div class="flow-root">
-							<ul role="list" class="-my-6 divide-y divide-gray-200">
-								<li class="flex space-x-6 py-6">
-									<img src="https://tailwindui.com/img/ecommerce-images/checkout-page-05-product-01.jpg" alt="" class="h-24 w-24 flex-none rounded-md bg-gray-100 object-cover object-center"/>
-									<div class="flex-auto">
-										<div class="space-y-1 sm:flex sm:items-start sm:justify-between sm:space-x-6">
-											<div class="flex-auto space-y-1 text-sm font-medium">
-												<h3 class="text-gray-900">
-													<a href="#">Women&#039;s Basic Tee</a>
-												</h3>
-												<p class="text-gray-900">$32.00</p>
-												<p class="hidden text-gray-500 sm:block">Gray</p>
-												<p class="hidden text-gray-500 sm:block">S</p>
-											</div>
-											<div class="flex flex-none space-x-4">
-												<button type="button" class="text-sm font-medium text-primary-600 hover:text-primary-500">Edit</button>
-												<div class="flex border-l border-gray-300 pl-4">
-													<button type="button" class="text-sm font-medium text-primary-600 hover:text-primary-500">Remove</button>
+						<h3 class="text-3xl font-bold tracking-tight text-gray-900">Checkout Summary</h3>
+						<div class="prose prose-sm mt-4 text-gray-500">
+							<p>This list contains the list of items you have already purchased.</p>
+						</div>
+						<div class="mt-12 flow-root">
+							<ul role="list" class="-divide-y divide-gray-200 border-b border-t border-gray-200">
+								for _, item := range params.Checkout.CheckoutItems {
+									<li class="flex py-6 sm:py-10">
+										<div class="flex-shrink-0">
+											<img src={ item.Item.ImageUrl } alt={ item.Item.Name } class="h-24 w-24 rounded-lg object-cover object-center sm:h-32 sm:w-32"/>
+										</div>
+										<div class="relative ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+											<div>
+												<div class="flex justify-between sm:grid sm:grid-cols-2">
+													<div class="pr-6">
+														<h3 class="text-sm font-medium text-gray-700 ">{ item.Item.Name }</h3>
+														<!--<p class="mt-1 text-sm text-gray-500">White</p>-->
+													</div>
+													<p class="text-right text-sm font-medium text-gray-900">{ item.Item.Price }</p>
+												</div>
+												<div class="mt-4 flex items-center sm:absolute sm:left-1/2 sm:top-0 sm:mt-0 sm:block">
+													<label for="quantity" class="sr-only">Quantity, { item.Item.Name }</label>
+													<select id="quantity" name="quantity" class="block max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm">
+														<option value="1">1</option>
+														<option value="2">2</option>
+														<option value="3">3</option>
+														<option value="4">4</option>
+														<option value="5">5</option>
+														<option value="6">6</option>
+														<option value="7">7</option>
+														<option value="8">8</option>
+													</select>
+													<button type="button" class="ml-4 text-sm font-medium text-primary-600 hover:text-primary-500 sm:ml-0 sm:mt-3">
+														<span>Remove</span>
+													</button>
 												</div>
 											</div>
+											<p class="mt-4 flex space-x-2 text-sm text-gray-700">
+												<!--
+												<svg class="h-5 w-5 flex-shrink-0 text-green-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+													<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"></path>
+												</svg>
+												<span>In stock</span>
+												-->
+											</p>
 										</div>
-									</div>
-								</li>
-								<li class="flex space-x-6 py-6">
-									<img src="https://tailwindui.com/img/ecommerce-images/checkout-page-05-product-01.jpg" alt="" class="h-24 w-24 flex-none rounded-md bg-gray-100 object-cover object-center"/>
-									<div class="flex-auto">
-										<div class="space-y-1 sm:flex sm:items-start sm:justify-between sm:space-x-6">
-											<div class="flex-auto space-y-1 text-sm font-medium">
-												<h3 class="text-gray-900">
-													<a href="#">Women&#039;s Basic Tee</a>
-												</h3>
-												<p class="text-gray-900">$32.00</p>
-												<p class="hidden text-gray-500 sm:block">Gray</p>
-												<p class="hidden text-gray-500 sm:block">S</p>
-											</div>
-											<div class="flex flex-none space-x-4">
-												<button type="button" class="text-sm font-medium text-primary-600 hover:text-primary-500">Edit</button>
-												<div class="flex border-l border-gray-300 pl-4">
-													<button type="button" class="text-sm font-medium text-primary-600 hover:text-primary-500">Remove</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</li>
+									</li>
+								}
 							</ul>
 						</div>
 					</div>
