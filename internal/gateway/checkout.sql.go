@@ -177,3 +177,79 @@ func (q *Queries) FindCheckout(ctx context.Context, id string) (FindCheckoutRow,
 	)
 	return i, err
 }
+
+const findCheckoutResponse = `-- name: FindCheckoutResponse :one
+SELECT id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message, created_at, updated_at
+FROM checkout_response
+WHERE checkout_id = ?
+LIMIT 1
+`
+
+func (q *Queries) FindCheckoutResponse(ctx context.Context, checkoutID string) (CheckoutResponse, error) {
+	row := q.db.QueryRowContext(ctx, findCheckoutResponse, checkoutID)
+	var i CheckoutResponse
+	err := row.Scan(
+		&i.ID,
+		&i.CheckoutID,
+		&i.Name,
+		&i.AddressLineOne,
+		&i.AddressLineTwo,
+		&i.City,
+		&i.State,
+		&i.Zip,
+		&i.Message,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateCheckoutItem = `-- name: UpdateCheckoutItem :exec
+UPDATE checkout_item
+SET quantity = ?, updated_at = ?
+WHERE id = ?
+`
+
+type UpdateCheckoutItemParams struct {
+	Quantity  int64
+	UpdatedAt time.Time
+	ID        string
+}
+
+func (q *Queries) UpdateCheckoutItem(ctx context.Context, arg UpdateCheckoutItemParams) error {
+	_, err := q.db.ExecContext(ctx, updateCheckoutItem, arg.Quantity, arg.UpdatedAt, arg.ID)
+	return err
+}
+
+const updateCheckoutResponse = `-- name: UpdateCheckoutResponse :exec
+UPDATE checkout_response
+SET name = ?, address_line_one = ?, address_line_two = ?, city = ?, state = ?, zip = ?, message = ?, updated_at = ?
+WHERE id = ?
+`
+
+type UpdateCheckoutResponseParams struct {
+	Name           string
+	AddressLineOne string
+	AddressLineTwo string
+	City           string
+	State          string
+	Zip            string
+	Message        string
+	UpdatedAt      time.Time
+	ID             string
+}
+
+func (q *Queries) UpdateCheckoutResponse(ctx context.Context, arg UpdateCheckoutResponseParams) error {
+	_, err := q.db.ExecContext(ctx, updateCheckoutResponse,
+		arg.Name,
+		arg.AddressLineOne,
+		arg.AddressLineTwo,
+		arg.City,
+		arg.State,
+		arg.Zip,
+		arg.Message,
+		arg.UpdatedAt,
+		arg.ID,
+	)
+	return err
+}

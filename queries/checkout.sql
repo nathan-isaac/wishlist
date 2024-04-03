@@ -10,11 +10,27 @@ VALUES (?, ?, ?, ?, ?, ?);
 INSERT INTO checkout_response (id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message, created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
+-- name: UpdateCheckoutItem :exec
+UPDATE checkout_item
+SET quantity = ?, updated_at = ?
+WHERE id = ?;
+
+-- name: UpdateCheckoutResponse :exec
+UPDATE checkout_response
+SET name = ?, address_line_one = ?, address_line_two = ?, city = ?, state = ?, zip = ?, message = ?, updated_at = ?
+WHERE id = ?;
+
 -- name: FindCheckout :one
 SELECT sqlc.embed(checkout), sqlc.embed(list)
 FROM checkout
 JOIN list on checkout.list_id = list.id
 WHERE checkout.id = ?
+LIMIT 1;
+
+-- name: FindCheckoutResponse :one
+SELECT *
+FROM checkout_response
+WHERE checkout_id = ?
 LIMIT 1;
 
 -- name: FilterCheckoutItems :many

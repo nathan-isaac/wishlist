@@ -77,7 +77,7 @@ templ CheckoutShowView(params CheckoutShowParams) {
 						</div>
 					</div>
 					<div class="mx-auto w-full max-w-lg">
-						<form>
+						<form hx-put={ params.Checkout.UpdateUrl() }>
 							<div class="-my-6 divide-y divide-gray-200 space-y-6">
 								<section class="py-6">
 									<h2 class="text-lg font-medium text-gray-900">Thank you note information</h2>
@@ -92,15 +92,15 @@ templ CheckoutShowView(params CheckoutShowParams) {
 											</div>
 										</div>
 										<div class="sm:col-span-3">
-											<label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+											<label for="address_line_one" class="block text-sm font-medium text-gray-700">Address</label>
 											<div class="mt-1">
-												<input type="text" id="address" name="address" autocomplete="street-address" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input type="text" id="address_line_one" name="address_line_one" autocomplete="street-address" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
 											</div>
 										</div>
 										<div class="sm:col-span-3">
-											<label for="apartment" class="block text-sm font-medium text-gray-700">Apartment, suite, etc.</label>
+											<label for="address_line_two" class="block text-sm font-medium text-gray-700">Apartment, suite, etc.</label>
 											<div class="mt-1">
-												<input type="text" id="apartment" name="apartment" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input type="text" id="address_line_two" name="address_line_two" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
 											</div>
 										</div>
 										<div>
@@ -116,9 +116,9 @@ templ CheckoutShowView(params CheckoutShowParams) {
 											</div>
 										</div>
 										<div>
-											<label for="postal-code" class="block text-sm font-medium text-gray-700">Postal code</label>
+											<label for="postal_code" class="block text-sm font-medium text-gray-700">Postal code</label>
 											<div class="mt-1">
-												<input type="text" id="postal-code" name="postal-code" autocomplete="postal-code" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input type="text" id="postal_code" name="postal_code" autocomplete="postal-code" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
 											</div>
 										</div>
 									</div>
@@ -132,7 +132,7 @@ templ CheckoutShowView(params CheckoutShowParams) {
 									</div>
 									<div class="mt-6 flex space-x-2">
 										<div class="flex h-5 items-center">
-											<input id="anonymous" name="anonymous" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"/>
+											<input id="anonymous" name="anonymous" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" value="true"/>
 										</div>
 										<label for="anonymous" class="text-sm text-gray-500">I prefer to stay anonymous.</label>
 									</div>

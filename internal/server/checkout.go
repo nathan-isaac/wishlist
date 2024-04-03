@@ -1,6 +1,9 @@
 package server
 
 import (
+	"database/sql"
+	"errors"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"log/slog"
 	"net/http"
@@ -108,6 +111,51 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 	})
 
 	return HxRedirect(c, "/checkout/"+checkoutId)
+}
+
+type CheckoutUpdateRequest struct {
+	Id             string `param:"id"`
+	Name           string `form:"name"`
+	AddressLineOne string `form:"address_line_one"`
+	AddressLineTwo string `form:"address_line_two"`
+	City           string `form:"city"`
+	Region         string `form:"region"`
+	PostalCode     string `form:"postal_code"`
+	Anonymous      bool   `form:"anonymous"`
+	Message        string `form:"message"`
+}
+
+func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
+	var req CheckoutUpdateRequest
+	err := c.Bind(&req)
+	if err != nil {
+		slog.Info("checkoutRecord update handler", "err", err)
+		return c.String(http.StatusBadRequest, "bad request")
+	}
+
+	slog.Info("checkoutRecord show handler", "req", req, "id", req.Id)
+
+	checkoutRecord, err := s.queries.FindCheckout(s.ctx, req.Id)
+
+	if err != nil {
+		slog.Info("checkoutRecord not found", "record", checkoutRecord, "err", err)
+		return c.String(http.StatusBadRequest, "checkoutRecord not found")
+	}
+
+	checkoutResponseRecord, err := s.queries.FindCheckoutResponse(s.ctx, req.Id)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// create a new checkout response
+		} else {
+			slog.Info("checkout response not found", "record", checkoutResponseRecord, "err", err)
+			return c.String(http.StatusInternalServerError, "error fetching checkout response")
+		}
+	}
+
+	// update the checkout response
+
+	return HxRedirect(c, fmt.Sprintf("/share/%s", checkoutRecord.List.ShareCode))
 }
 
 // how does a user cancel a checkout?

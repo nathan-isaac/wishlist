@@ -22,6 +22,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/checkout/:id", s.CheckoutShowHandler)
 	e.POST("/checkout", s.CheckoutCreateHandler)
+	e.PUT("/checkout/:id", s.CheckoutUpdateHandler)
 
 	admin := e.Group("/admin")
 

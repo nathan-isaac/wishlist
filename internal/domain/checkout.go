@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Checkout struct {
 	ID            string
@@ -9,6 +12,10 @@ type Checkout struct {
 	List          List
 	CheckoutItems []CheckoutItem
 	Response      CheckoutResponse
+}
+
+func (c Checkout) UpdateUrl() string {
+	return fmt.Sprintf("/checkout/%s", c.ID)
 }
 
 type CheckoutItem struct {
