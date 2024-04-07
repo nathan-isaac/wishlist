@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 	"wishlist/internal/domain"
 	"wishlist/internal/gateway"
@@ -259,6 +260,54 @@ func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
 	}
 
 	return HxRedirect(c, fmt.Sprintf("/share/%s?%s", checkoutRecord.List.ShareCode, redirectParams.Encode()))
+}
+
+type CheckoutItemUpdateRequest struct {
+	Id       string `param:"id"`
+	Quantity string `form:"quantity"`
+}
+
+func (s *Server) CheckoutItemUpdateHandler(c echo.Context) error {
+	var req CheckoutItemUpdateRequest
+	err := c.Bind(&req)
+
+	if err != nil {
+		return err
+	}
+
+	checkoutItem, err := s.queries.FindCheckoutItem(s.ctx, req.Id)
+
+	if err != nil {
+		return err
+	}
+
+	quantity, err := strconv.ParseInt(req.Quantity, 10, 64)
+
+	if err != nil {
+		return err
+	}
+
+	if quantity <= 0 {
+		err = s.queries.DeleteCheckoutItem(s.ctx, req.Id)
+
+		if err != nil {
+			return err
+		}
+
+		return HxRedirect(c, fmt.Sprintf("/checkout/%s", checkoutItem.CheckoutItem.CheckoutID))
+	}
+
+	err = s.queries.UpdateCheckoutItem(s.ctx, gateway.UpdateCheckoutItemParams{
+		Quantity:  quantity,
+		UpdatedAt: time.Now(),
+		ID:        checkoutItem.CheckoutItem.ID,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return HxRedirect(c, fmt.Sprintf("/checkout/%s", checkoutItem.CheckoutItem.CheckoutID))
 }
 
 // how does a user cancel a checkout?

@@ -57,9 +57,12 @@ templ CheckoutShowView(params CheckoutShowParams) {
 															}
 														}
 													</select>
-													<button type="button" class="ml-4 text-sm font-medium text-primary-600 hover:text-primary-500 sm:ml-0 sm:mt-3">
-														<span>Remove</span>
-													</button>
+													<form hx-put={ `/checkout-item/` + item.ID }>
+														<input type="hidden" name="quantity" value="0"/>
+														<button type="submit" class="ml-4 text-sm font-medium text-primary-600 hover:text-primary-500 sm:ml-0 sm:mt-3">
+															<span>Remove</span>
+														</button>
+													</form>
 												</div>
 											</div>
 											<p class="mt-4 flex space-x-2 text-sm text-gray-700">
