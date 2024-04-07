@@ -48,7 +48,13 @@ templ CheckoutShowView(params CheckoutShowParams) {
 												</div>
 												<div class="mt-4 flex items-center sm:absolute sm:left-1/2 sm:top-0 sm:mt-0 sm:block">
 													<label for="quantity" class="sr-only">Quantity, { item.Item.Name }</label>
-													<select id="quantity" name="quantity" class="block max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm">
+													<select
+														id="quantity"
+														name="quantity"
+														hx-put={ `/checkout-item/` + item.ID }
+														hx-trigger="input changed"
+														class="block max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
+													>
 														for _, value := range item.QuantityOptions() {
 															if item.Quantity == value {
 																<option value={ fmt.Sprintf("%d", value) } selected>{ fmt.Sprintf("%d", value) }</option>
