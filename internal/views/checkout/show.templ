@@ -88,37 +88,77 @@ templ CheckoutShowView(params CheckoutShowParams) {
 										<div class="sm:col-span-3">
 											<label for="name" class="block text-sm font-medium text-gray-700">Name</label>
 											<div class="mt-1">
-												<input type="text" id="name" name="name" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input
+													type="text"
+													id="name"
+													name="name"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+													value={ params.Checkout.Response.Name }
+												/>
 											</div>
 										</div>
 										<div class="sm:col-span-3">
 											<label for="address_line_one" class="block text-sm font-medium text-gray-700">Address</label>
 											<div class="mt-1">
-												<input type="text" id="address_line_one" name="address_line_one" autocomplete="street-address" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input
+													type="text"
+													id="address_line_one"
+													name="address_line_one"
+													autocomplete="street-address"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+													value={ params.Checkout.Response.AddressLineOne }
+												/>
 											</div>
 										</div>
 										<div class="sm:col-span-3">
 											<label for="address_line_two" class="block text-sm font-medium text-gray-700">Apartment, suite, etc.</label>
 											<div class="mt-1">
-												<input type="text" id="address_line_two" name="address_line_two" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input
+													type="text"
+													id="address_line_two"
+													name="address_line_two"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+													value={ params.Checkout.Response.AddressLineTwo }
+												/>
 											</div>
 										</div>
 										<div>
 											<label for="city" class="block text-sm font-medium text-gray-700">City</label>
 											<div class="mt-1">
-												<input type="text" id="city" name="city" autocomplete="address-level2" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input
+													type="text"
+													id="city"
+													name="city"
+													autocomplete="address-level2"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+													value={ params.Checkout.Response.City }
+												/>
 											</div>
 										</div>
 										<div>
 											<label for="region" class="block text-sm font-medium text-gray-700">State / Province</label>
 											<div class="mt-1">
-												<input type="text" id="region" name="region" autocomplete="address-level1" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input
+													type="text"
+													id="region"
+													name="region"
+													autocomplete="address-level1"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+													value={ params.Checkout.Response.City }
+												/>
 											</div>
 										</div>
 										<div>
 											<label for="postal_code" class="block text-sm font-medium text-gray-700">Postal code</label>
 											<div class="mt-1">
-												<input type="text" id="postal_code" name="postal_code" autocomplete="postal-code" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"/>
+												<input
+													type="text"
+													id="postal_code"
+													name="postal_code"
+													autocomplete="postal-code"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+													value={ params.Checkout.Response.Zip }
+												/>
 											</div>
 										</div>
 									</div>
@@ -143,7 +183,7 @@ templ CheckoutShowView(params CheckoutShowParams) {
 										<div class="col-span-full">
 											<label for="message" class="block text-sm font-medium leading-6 text-gray-900">Message</label>
 											<div class="mt-2">
-												<textarea id="message" name="message" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"></textarea>
+												<textarea id="message" name="message" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">{ params.Checkout.Response.Message }</textarea>
 											</div>
 											<p class="mt-3 text-sm leading-6 text-gray-600">Write a message (optional).</p>
 										</div>

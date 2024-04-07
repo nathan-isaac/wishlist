@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"time"
 	"wishlist/internal/domain"
 	"wishlist/internal/gateway"
@@ -31,6 +32,12 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "error fetching checkout items")
 	}
 
+	checkoutResponse, err := s.queries.FindCheckoutResponse(s.ctx, id)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error fetching checkout response")
+	}
+
 	return Render(c, checkout.CheckoutShowView(checkout.CheckoutShowParams{
 		Checkout: domain.Checkout{
 			ID:        checkoutRecord.Checkout.ID,
@@ -47,7 +54,17 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 					Item:       domain.ToItem(t.ListItem),
 				}
 			}),
-			Response: domain.CheckoutResponse{},
+			Response: domain.CheckoutResponse{
+				ID:             checkoutResponse.ID,
+				CheckoutID:     checkoutResponse.CheckoutID,
+				Name:           checkoutResponse.Name,
+				AddressLineOne: checkoutResponse.AddressLineOne,
+				AddressLineTwo: checkoutResponse.AddressLineTwo,
+				City:           checkoutResponse.City,
+				State:          checkoutResponse.State,
+				Zip:            checkoutResponse.Zip,
+				Message:        checkoutResponse.Message,
+			},
 		},
 	}))
 }
@@ -72,10 +89,8 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "list not found")
 	}
 
-	for _, item := range list.Items {
-		if item.Id != req.ItemId {
-			return c.String(http.StatusBadRequest, "item not found")
-		}
+	if !s.domain.ListContainsItem(list.Items, req.ItemId) {
+		return c.String(http.StatusBadRequest, "item not found")
 	}
 
 	checkoutId, err := domain.GenerateId()
@@ -146,16 +161,56 @@ func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// create a new checkout response
+			responseId, err := domain.GenerateId()
+
+			if err != nil {
+				return c.String(http.StatusInternalServerError, "error generating checkout id")
+			}
+
+			err = s.queries.CreateCheckoutResponse(s.ctx, gateway.CreateCheckoutResponseParams{
+				ID:             responseId,
+				CheckoutID:     checkoutRecord.Checkout.ID,
+				Name:           req.Name,
+				AddressLineOne: req.AddressLineOne,
+				AddressLineTwo: req.AddressLineTwo,
+				City:           req.City,
+				State:          req.Region,
+				Zip:            req.PostalCode,
+				Message:        req.Message,
+				CreatedAt:      time.Now(),
+				UpdatedAt:      time.Now(),
+			})
+
+			if err != nil {
+				return c.String(http.StatusInternalServerError, "error fetching checkout response")
+			}
 		} else {
 			slog.Info("checkout response not found", "record", checkoutResponseRecord, "err", err)
 			return c.String(http.StatusInternalServerError, "error fetching checkout response")
 		}
 	}
 
-	// update the checkout response
+	err = s.queries.UpdateCheckoutResponse(s.ctx, gateway.UpdateCheckoutResponseParams{
+		Name:           req.Name,
+		AddressLineOne: req.AddressLineOne,
+		AddressLineTwo: req.AddressLineTwo,
+		City:           req.City,
+		State:          req.Region,
+		Zip:            req.PostalCode,
+		Message:        req.Message,
+		UpdatedAt:      time.Now(),
+		ID:             checkoutResponseRecord.ID,
+	})
 
-	return HxRedirect(c, fmt.Sprintf("/share/%s", checkoutRecord.List.ShareCode))
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error updating checkout response")
+	}
+
+	redirectParams := url.Values{
+		"checkoutId": {checkoutRecord.Checkout.ID},
+	}
+
+	return HxRedirect(c, fmt.Sprintf("/share/%s?%s", checkoutRecord.List.ShareCode, redirectParams.Encode()))
 }
 
 // how does a user cancel a checkout?

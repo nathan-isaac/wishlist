@@ -88,21 +88,31 @@ type FindListResponse struct {
 	Items []Item
 }
 
+func (it *App) ListContainsItem(items []Item, itemId string) bool {
+	for _, item := range items {
+		if item.Id == itemId {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (it *App) FindList(id string) (FindListResponse, error) {
-	wishlist, err := it.Queries.FindList(it.Ctx, id)
+	list, err := it.Queries.FindList(it.Ctx, id)
 
 	if err != nil {
 		return FindListResponse{}, err
 	}
 
-	items, err := it.Queries.FilerItemsForList(it.Ctx, id)
+	items, err := it.Queries.FilerItemsForList(it.Ctx, list.ID)
 
 	if err != nil {
 		return FindListResponse{}, err
 	}
 
 	return FindListResponse{
-		List:  ToList(wishlist),
+		List:  ToList(list),
 		Items: utils.Map(items, ToItem),
 	}, nil
 }
