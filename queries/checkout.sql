@@ -2,6 +2,11 @@
 INSERT INTO checkout (id, list_id, created_at, updated_at)
 VALUES (?, ?, ?, ?);
 
+-- name: UpdateCheckout :exec
+UPDATE checkout
+SET updated_at = ?
+WHERE id = ?;
+
 -- name: CreateCheckoutItem :exec
 INSERT INTO checkout_item (id, checkout_id, list_item_id, quantity, created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?);

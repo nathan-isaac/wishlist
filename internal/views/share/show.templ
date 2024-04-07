@@ -12,7 +12,27 @@ templ ShareView(share domain.Share) {
 				<h1 class="text-4xl font-bold tracking-tight text-gray-900">{ share.List.Name }</h1>
 				<p class="mx-auto mt-4 max-w-3xl text-base text-gray-500">{ share.List.Description }</p>
 			</div>
-			<div class="pb-24">
+			<div class="pb-24 space-y-6">
+				if len(share.CheckoutUrl) > 0 {
+					<div class="rounded-md bg-blue-50 p-4">
+						<div class="flex">
+							<div class="flex-shrink-0">
+								<svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+									<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"></path>
+								</svg>
+							</div>
+							<div class="ml-3 flex-1 md:flex md:justify-between">
+								<p class="text-sm text-blue-700">You have purchased 3 items from this list. Add more items below or edit the checkout items.</p>
+								<p class="mt-3 text-sm md:ml-6 md:mt-0">
+									<a href={ templ.URL(share.CheckoutUrl) } class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">
+										Edit
+										<span aria-hidden="true">&rarr;</span>
+									</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				}
 				<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					for _, item := range share.Items {
 						<li class="col-span-1 rounded bg-white shadow p-6 space-y-6 flex flex-col justify-between">
@@ -44,6 +64,7 @@ templ ShareView(share domain.Share) {
 								>
 									<input type="hidden" name="list_id" value={ item.ListId }/>
 									<input type="hidden" name="item_id" value={ item.Id }/>
+									<input type="hidden" name="checkout_id" value={ share.CheckoutId }/>
 									<button
 										type="submit"
 										class="inline-flex items-center gap-x-1.5 rounded-md bg-emerald-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"

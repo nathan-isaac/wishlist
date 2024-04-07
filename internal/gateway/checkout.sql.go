@@ -204,6 +204,22 @@ func (q *Queries) FindCheckoutResponse(ctx context.Context, checkoutID string) (
 	return i, err
 }
 
+const updateCheckout = `-- name: UpdateCheckout :exec
+UPDATE checkout
+SET updated_at = ?
+WHERE id = ?
+`
+
+type UpdateCheckoutParams struct {
+	UpdatedAt time.Time
+	ID        string
+}
+
+func (q *Queries) UpdateCheckout(ctx context.Context, arg UpdateCheckoutParams) error {
+	_, err := q.db.ExecContext(ctx, updateCheckout, arg.UpdatedAt, arg.ID)
+	return err
+}
+
 const updateCheckoutItem = `-- name: UpdateCheckoutItem :exec
 UPDATE checkout_item
 SET quantity = ?, updated_at = ?

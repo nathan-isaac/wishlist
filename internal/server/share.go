@@ -24,10 +24,19 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
 	}
 
+	checkoutId := c.QueryParam("checkoutId")
+	checkoutURL := ""
+
+	if checkoutId != "" {
+		checkoutURL = fmt.Sprintf("/checkout/%s", checkoutId)
+	}
+
 	return Render(c, share.ShareView(domain.Share{
-		Id:    wishlist.ID,
-		Code:  code,
-		List:  domain.ToList(wishlist),
-		Items: utils.Map(items, domain.ToItem),
+		Id:          wishlist.ID,
+		Code:        code,
+		List:        domain.ToList(wishlist),
+		Items:       utils.Map(items, domain.ToItem),
+		CheckoutUrl: checkoutURL,
+		CheckoutId:  checkoutId,
 	}))
 }

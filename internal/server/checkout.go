@@ -70,8 +70,9 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 }
 
 type CheckoutCreateRequest struct {
-	ListId string `form:"list_id"`
-	ItemId string `form:"item_id"`
+	ListId     string `form:"list_id"`
+	ItemId     string `form:"item_id"`
+	CheckoutId string `form:"checkout_id"`
 }
 
 func (s *Server) CheckoutCreateHandler(c echo.Context) error {
@@ -93,21 +94,40 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "item not found")
 	}
 
-	checkoutId, err := domain.GenerateId()
+	checkoutResponse, err := s.queries.FindCheckout(s.ctx, req.CheckoutId)
+	checkoutId := ""
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "error generating checkout id")
-	}
+		if !errors.Is(err, sql.ErrNoRows) {
+			return c.String(http.StatusInternalServerError, "error fetching checkout id")
+		}
 
-	err = s.queries.CreateCheckout(s.ctx, gateway.CreateCheckoutParams{
-		ID:        checkoutId,
-		ListID:    req.ListId,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	})
+		checkoutId, err := domain.GenerateId()
 
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "error creating checkout")
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "error generating checkout id")
+		}
+
+		err = s.queries.CreateCheckout(s.ctx, gateway.CreateCheckoutParams{
+			ID:        checkoutId,
+			ListID:    req.ListId,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		})
+
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "error creating checkout")
+		}
+	} else {
+		checkoutId = checkoutResponse.Checkout.ID
+		err = s.queries.UpdateCheckout(s.ctx, gateway.UpdateCheckoutParams{
+			UpdatedAt: time.Now(),
+			ID:        checkoutId,
+		})
+
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "error updating checkout")
+		}
 	}
 
 	itemId, err := domain.GenerateId()
@@ -124,6 +144,10 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	})
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "error creating checkout item")
+	}
 
 	return HxRedirect(c, "/checkout/"+checkoutId)
 }
