@@ -59,7 +59,8 @@ func (q *Queries) CreateCheckoutItem(ctx context.Context, arg CreateCheckoutItem
 }
 
 const createCheckoutResponse = `-- name: CreateCheckoutResponse :exec
-INSERT INTO checkout_response (id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message, created_at, updated_at)
+INSERT INTO checkout_response (id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message,
+                               created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
@@ -97,7 +98,7 @@ func (q *Queries) CreateCheckoutResponse(ctx context.Context, arg CreateCheckout
 const filterCheckoutItems = `-- name: FilterCheckoutItems :many
 SELECT checkout_item.id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
 FROM checkout_item
-join list_item on checkout_item.list_item_id = list_item.id
+         join list_item on checkout_item.list_item_id = list_item.id
 WHERE checkout_id = ?
 `
 
@@ -149,7 +150,7 @@ func (q *Queries) FilterCheckoutItems(ctx context.Context, checkoutID string) ([
 const findCheckout = `-- name: FindCheckout :one
 SELECT checkout.id, checkout.list_id, checkout.created_at, checkout.updated_at, list.id, list.name, list.description, list.share_code, list.public, list.created_at, list.updated_at
 FROM checkout
-JOIN list on checkout.list_id = list.id
+         JOIN list on checkout.list_id = list.id
 WHERE checkout.id = ?
 LIMIT 1
 `
@@ -174,6 +175,48 @@ func (q *Queries) FindCheckout(ctx context.Context, id string) (FindCheckoutRow,
 		&i.List.Public,
 		&i.List.CreatedAt,
 		&i.List.UpdatedAt,
+	)
+	return i, err
+}
+
+const findCheckoutItemByItemId = `-- name: FindCheckoutItemByItemId :one
+SELECT checkout_item.id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
+FROM checkout_item
+         join list_item on checkout_item.list_item_id = list_item.id
+WHERE checkout_id = ?
+  and list_item_id = ?
+`
+
+type FindCheckoutItemByItemIdParams struct {
+	CheckoutID string
+	ListItemID string
+}
+
+type FindCheckoutItemByItemIdRow struct {
+	CheckoutItem CheckoutItem
+	ListItem     ListItem
+}
+
+func (q *Queries) FindCheckoutItemByItemId(ctx context.Context, arg FindCheckoutItemByItemIdParams) (FindCheckoutItemByItemIdRow, error) {
+	row := q.db.QueryRowContext(ctx, findCheckoutItemByItemId, arg.CheckoutID, arg.ListItemID)
+	var i FindCheckoutItemByItemIdRow
+	err := row.Scan(
+		&i.CheckoutItem.ID,
+		&i.CheckoutItem.CheckoutID,
+		&i.CheckoutItem.ListItemID,
+		&i.CheckoutItem.Quantity,
+		&i.CheckoutItem.CreatedAt,
+		&i.CheckoutItem.UpdatedAt,
+		&i.ListItem.ID,
+		&i.ListItem.ListID,
+		&i.ListItem.Link,
+		&i.ListItem.Name,
+		&i.ListItem.Description,
+		&i.ListItem.ImageUrl,
+		&i.ListItem.Quantity,
+		&i.ListItem.Price,
+		&i.ListItem.CreatedAt,
+		&i.ListItem.UpdatedAt,
 	)
 	return i, err
 }
@@ -222,7 +265,8 @@ func (q *Queries) UpdateCheckout(ctx context.Context, arg UpdateCheckoutParams) 
 
 const updateCheckoutItem = `-- name: UpdateCheckoutItem :exec
 UPDATE checkout_item
-SET quantity = ?, updated_at = ?
+SET quantity   = ?,
+    updated_at = ?
 WHERE id = ?
 `
 
@@ -239,7 +283,14 @@ func (q *Queries) UpdateCheckoutItem(ctx context.Context, arg UpdateCheckoutItem
 
 const updateCheckoutResponse = `-- name: UpdateCheckoutResponse :exec
 UPDATE checkout_response
-SET name = ?, address_line_one = ?, address_line_two = ?, city = ?, state = ?, zip = ?, message = ?, updated_at = ?
+SET name             = ?,
+    address_line_one = ?,
+    address_line_two = ?,
+    city             = ?,
+    state            = ?,
+    zip              = ?,
+    message          = ?,
+    updated_at       = ?
 WHERE id = ?
 `
 

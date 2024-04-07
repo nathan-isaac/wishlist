@@ -27,6 +27,22 @@ type CheckoutItem struct {
 	Item       Item
 }
 
+func (it *CheckoutItem) QuantityOptions() []int64 {
+	quantity := it.Item.Quantity
+
+	if it.Quantity > quantity {
+		quantity = it.Quantity
+	}
+
+	var options []int64
+
+	for i := int64(1); i <= quantity; i++ {
+		options = append(options, i)
+	}
+
+	return options
+}
+
 type CheckoutResponse struct {
 	ID             string
 	CheckoutID     string

@@ -47,6 +47,7 @@ type Item struct {
 	Name              string
 	Price             string
 	PriceValue        string
+	Quantity          int64
 	PurchasedQuantity string
 	NeededQuantity    string
 	ShowURL           string
@@ -75,6 +76,7 @@ func ToItem(item gateway.ListItem) Item {
 		Description:       item.Description,
 		Price:             moneyPrice.Display(),
 		PriceValue:        formatter.Format(item.Price),
+		Quantity:          item.Quantity,
 		NeededQuantity:    fmt.Sprintf("%d", item.Quantity),
 		PurchasedQuantity: "0",
 		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ID),

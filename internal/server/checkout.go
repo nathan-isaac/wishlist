@@ -130,23 +130,47 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 		}
 	}
 
-	itemId, err := domain.GenerateId()
-
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "error generating checkout item id")
-	}
-
-	err = s.queries.CreateCheckoutItem(s.ctx, gateway.CreateCheckoutItemParams{
-		ID:         itemId,
+	checkoutItem, err := s.queries.FindCheckoutItemByItemId(s.ctx, gateway.FindCheckoutItemByItemIdParams{
 		CheckoutID: checkoutId,
 		ListItemID: req.ItemId,
-		Quantity:   1,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
 	})
+	itemId := ""
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "error creating checkout item")
+		if !errors.Is(err, sql.ErrNoRows) {
+			return err
+		}
+
+		itemId, err := domain.GenerateId()
+
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "error generating checkout item id")
+		}
+
+		err = s.queries.CreateCheckoutItem(s.ctx, gateway.CreateCheckoutItemParams{
+			ID:         itemId,
+			CheckoutID: checkoutId,
+			ListItemID: req.ItemId,
+			Quantity:   1,
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
+		})
+
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "error creating checkout item")
+		}
+	} else {
+		itemId = checkoutItem.CheckoutItem.ID
+
+		err = s.queries.UpdateCheckoutItem(s.ctx, gateway.UpdateCheckoutItemParams{
+			Quantity:  checkoutItem.CheckoutItem.Quantity + 1,
+			UpdatedAt: time.Now(),
+			ID:        itemId,
+		})
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return HxRedirect(c, "/checkout/"+checkoutId)

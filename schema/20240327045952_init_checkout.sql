@@ -2,10 +2,10 @@
 -- +goose StatementBegin
 CREATE TABLE checkout
 (
-    id          TEXT PRIMARY KEY,
-    list_id TEXT      NOT NULL,
-    created_at  TIMESTAMP NOT NULL,
-    updated_at  TIMESTAMP NOT NULL,
+    id         TEXT PRIMARY KEY,
+    list_id    TEXT      NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
     FOREIGN KEY (list_id) REFERENCES list (id)
 );
 create table checkout_response
@@ -25,14 +25,15 @@ create table checkout_response
 );
 create table checkout_item
 (
-    id               TEXT PRIMARY KEY,
-    checkout_id      TEXT      NOT NULL,
+    id           TEXT PRIMARY KEY,
+    checkout_id  TEXT      NOT NULL,
     list_item_id TEXT      NOT NULL,
-    quantity         INTEGER   NOT NULL,
-    created_at       TIMESTAMP NOT NULL,
-    updated_at       TIMESTAMP NOT NULL,
+    quantity     INTEGER   NOT NULL,
+    created_at   TIMESTAMP NOT NULL,
+    updated_at   TIMESTAMP NOT NULL,
     FOREIGN KEY (checkout_id) REFERENCES checkout (id),
-    FOREIGN KEY (list_item_id) REFERENCES list_item (id)
+    FOREIGN KEY (list_item_id) REFERENCES list_item (id),
+    UNIQUE (checkout_id, list_item_id)
 );
 -- +goose StatementEnd
 
