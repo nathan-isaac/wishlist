@@ -32,7 +32,7 @@ func ToList(list gateway.List) List {
 		Description: list.Description,
 		EditURL:     fmt.Sprintf("/admin/lists/%s/edit", list.ListID),
 		ShowURL:     fmt.Sprintf("/admin/lists/%s", list.ListID),
-		ShareURL:    fmt.Sprintf("/share/%s", list.ShareCode),
+		ShareURL:    fmt.Sprintf("/shares/%s", list.ShareCode),
 		NewItemURL:  fmt.Sprintf("/admin/lists/%s/items/new", list.ListID),
 		ShareCode:   list.ShareCode,
 	}
@@ -81,7 +81,7 @@ func ToItem(item gateway.ListItem) Item {
 		PurchasedQuantity: "0",
 		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ListItemID),
 		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ListItemID),
-		CheckoutUrl:       "/checkout",
+		CheckoutUrl:       "/checkouts",
 	}
 }
 

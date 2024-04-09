@@ -9,7 +9,7 @@ import (
 	"wishlist/internal/views/share"
 )
 
-func (s *Server) ShareShowHandler(c echo.Context) error {
+func (s *Server) SharesShowHandler(c echo.Context) error {
 	code := c.Param("code")
 
 	wishlist, err := s.queries.FindListByShareCode(s.ctx, code)
@@ -28,7 +28,7 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 	checkoutURL := ""
 
 	if checkoutId != "" {
-		checkoutURL = fmt.Sprintf("/checkout/%s", checkoutId)
+		checkoutURL = fmt.Sprintf("/checkouts/%s", checkoutId)
 	}
 
 	return Render(c, share.ShareView(domain.Share{

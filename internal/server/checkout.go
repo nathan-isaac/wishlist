@@ -16,7 +16,7 @@ import (
 	"wishlist/internal/views/checkout"
 )
 
-func (s *Server) CheckoutShowHandler(c echo.Context) error {
+func (s *Server) CheckoutsShowHandler(c echo.Context) error {
 	id := c.Param("id")
 
 	slog.Info("checkout show handler", slog.String("id", id))
@@ -76,7 +76,7 @@ type CheckoutCreateRequest struct {
 	CheckoutId string `form:"checkout_id"`
 }
 
-func (s *Server) CheckoutCreateHandler(c echo.Context) error {
+func (s *Server) CheckoutsCreateHandler(c echo.Context) error {
 	var req CheckoutCreateRequest
 	err := c.Bind(&req)
 	if err != nil {
@@ -176,7 +176,7 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 		}
 	}
 
-	return HxRedirect(c, "/checkout/"+checkoutId)
+	return HxRedirect(c, "/checkouts/"+checkoutId)
 }
 
 type CheckoutUpdateRequest struct {
@@ -191,7 +191,7 @@ type CheckoutUpdateRequest struct {
 	Message        string `form:"message"`
 }
 
-func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
+func (s *Server) CheckoutsUpdateHandler(c echo.Context) error {
 	var req CheckoutUpdateRequest
 	err := c.Bind(&req)
 	if err != nil {
@@ -261,7 +261,7 @@ func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
 		"checkoutId": {checkoutRecord.Checkout.CheckoutID},
 	}
 
-	return HxRedirect(c, fmt.Sprintf("/share/%s?%s", checkoutRecord.List.ShareCode, redirectParams.Encode()))
+	return HxRedirect(c, fmt.Sprintf("/shares/%s?%s", checkoutRecord.List.ShareCode, redirectParams.Encode()))
 }
 
 type CheckoutItemUpdateRequest struct {
@@ -269,7 +269,7 @@ type CheckoutItemUpdateRequest struct {
 	Quantity string `form:"quantity"`
 }
 
-func (s *Server) CheckoutItemUpdateHandler(c echo.Context) error {
+func (s *Server) CheckoutItemsUpdateHandler(c echo.Context) error {
 	var req CheckoutItemUpdateRequest
 	err := c.Bind(&req)
 
@@ -296,7 +296,7 @@ func (s *Server) CheckoutItemUpdateHandler(c echo.Context) error {
 			return err
 		}
 
-		return HxRedirect(c, fmt.Sprintf("/checkout/%s", checkoutItem.CheckoutItem.CheckoutID))
+		return HxRedirect(c, fmt.Sprintf("/checkouts/%s", checkoutItem.CheckoutItem.CheckoutID))
 	}
 
 	err = s.queries.UpdateCheckoutItem(s.ctx, gateway.UpdateCheckoutItemParams{
@@ -309,7 +309,7 @@ func (s *Server) CheckoutItemUpdateHandler(c echo.Context) error {
 		return err
 	}
 
-	return HxRedirect(c, fmt.Sprintf("/checkout/%s", checkoutItem.CheckoutItem.CheckoutID))
+	return HxRedirect(c, fmt.Sprintf("/checkouts/%s", checkoutItem.CheckoutItem.CheckoutID))
 }
 
 // how does a user cancel a checkout?

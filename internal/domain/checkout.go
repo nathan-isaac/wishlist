@@ -15,7 +15,7 @@ type Checkout struct {
 }
 
 func (c Checkout) UpdateUrl() string {
-	return fmt.Sprintf("/checkout/%s", c.CheckoutId)
+	return fmt.Sprintf("/checkouts/%s", c.CheckoutId)
 }
 
 type CheckoutItem struct {

@@ -18,12 +18,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/_ping", s.PingHandler)
 
-	e.GET("/share/:code", s.ShareShowHandler)
+	e.GET("/shares/:code", s.SharesShowHandler)
 
-	e.GET("/checkout/:id", s.CheckoutShowHandler)
-	e.POST("/checkout", s.CheckoutCreateHandler)
-	e.PUT("/checkout/:id", s.CheckoutUpdateHandler)
-	e.PUT("/checkout-item/:id", s.CheckoutItemUpdateHandler)
+	e.GET("/checkouts/:id", s.CheckoutsShowHandler)
+	e.POST("/checkouts", s.CheckoutsCreateHandler)
+	e.PUT("/checkouts/:id", s.CheckoutsUpdateHandler)
+	e.PUT("/checkout-items/:id", s.CheckoutItemsUpdateHandler)
 
 	admin := e.Group("/admin")
 
