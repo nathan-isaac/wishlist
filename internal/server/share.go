@@ -10,7 +10,7 @@ import (
 )
 
 func (s *Server) SharesShowHandler(c echo.Context) error {
-	code := c.Param("code")
+	code := c.Param("share_code")
 
 	wishlist, err := s.queries.FindListByShareCode(s.ctx, code)
 

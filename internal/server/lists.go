@@ -17,7 +17,7 @@ import (
 )
 
 func (s *Server) ListsShowHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_id")
 
 	response, err := s.domain.FindList(id)
 
@@ -29,7 +29,7 @@ func (s *Server) ListsShowHandler(c echo.Context) error {
 }
 
 func (s *Server) ListsEditHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_id")
 
 	response, err := s.domain.FindList(id)
 
@@ -41,7 +41,7 @@ func (s *Server) ListsEditHandler(c echo.Context) error {
 }
 
 func (s *Server) ListsUpdateHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_id")
 
 	response, err := s.domain.UpdateList(domain.UpdateListParams{
 		ListId:      id,
@@ -57,7 +57,7 @@ func (s *Server) ListsUpdateHandler(c echo.Context) error {
 }
 
 func (s *Server) ListsDeleteHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_id")
 
 	err := s.domain.DeleteList(id)
 
@@ -121,7 +121,7 @@ func (s *Server) ListsCreateHandler(c echo.Context) error {
 }
 
 func (s *Server) ItemsNewHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_id")
 
 	wishlist, err := s.queries.FindList(s.ctx, id)
 
@@ -219,7 +219,7 @@ func (s *Server) ItemsCreateHandler(c echo.Context) error {
 }
 
 func (s *Server) ItemsEditHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_item_id")
 
 	log.Info("id: ", id)
 
@@ -239,7 +239,7 @@ func (s *Server) ItemsEditHandler(c echo.Context) error {
 }
 
 func (s *Server) ItemsUpdateHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_item_id")
 
 	listItem, err := s.queries.FindItem(s.ctx, id)
 
@@ -272,7 +272,7 @@ func (s *Server) ItemsUpdateHandler(c echo.Context) error {
 }
 
 func (s *Server) ItemsDeleteHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("list_item_id")
 
 	listItem, err := s.queries.FindItem(s.ctx, id)
 

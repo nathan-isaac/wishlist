@@ -18,12 +18,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/_ping", s.PingHandler)
 
-	e.GET("/shares/:code", s.SharesShowHandler)
+	e.GET("/shares/:share_code", s.SharesShowHandler)
 
-	e.GET("/checkouts/:id", s.CheckoutsShowHandler)
+	e.GET("/checkouts/:checkout_id", s.CheckoutsShowHandler)
 	e.POST("/checkouts", s.CheckoutsCreateHandler)
-	e.PUT("/checkouts/:id", s.CheckoutsUpdateHandler)
-	e.PUT("/checkout-items/:id", s.CheckoutItemsUpdateHandler)
+	e.PUT("/checkouts/:checkout_id", s.CheckoutsUpdateHandler)
+	e.PUT("/checkout-items/:checkout_item_id", s.CheckoutItemsUpdateHandler)
 
 	admin := e.Group("/admin")
 
@@ -36,16 +36,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 	admin.GET("/lists", s.ListsIndexHandler)
 	admin.POST("/lists", s.ListsCreateHandler)
 	admin.GET("/lists/new", s.ListsNewHandler)
-	admin.GET("/lists/:id", s.ListsShowHandler)
-	admin.GET("/lists/:id/edit", s.ListsEditHandler)
-	admin.PUT("/lists/:id", s.ListsUpdateHandler)
-	admin.DELETE("/lists/:id", s.ListsDeleteHandler)
+	admin.GET("/lists/:list_id", s.ListsShowHandler)
+	admin.GET("/lists/:list_id/edit", s.ListsEditHandler)
+	admin.PUT("/lists/:list_id", s.ListsUpdateHandler)
+	admin.DELETE("/lists/:list_id", s.ListsDeleteHandler)
 
-	admin.GET("/lists/:id/items/new", s.ItemsNewHandler)
+	admin.GET("/lists/:list_id/items/new", s.ItemsNewHandler)
 	admin.POST("/items", s.ItemsCreateHandler)
-	admin.GET("/items/:id/edit", s.ItemsEditHandler)
-	admin.PUT("/items/:id", s.ItemsUpdateHandler)
-	admin.DELETE("/items/:id", s.ItemsDeleteHandler)
+	admin.GET("/items/:list_item_id/edit", s.ItemsEditHandler)
+	admin.PUT("/items/:list_item_id", s.ItemsUpdateHandler)
+	admin.DELETE("/items/:list_item_id", s.ItemsDeleteHandler)
 
 	return e
 }

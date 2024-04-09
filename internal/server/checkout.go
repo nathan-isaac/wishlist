@@ -17,7 +17,7 @@ import (
 )
 
 func (s *Server) CheckoutsShowHandler(c echo.Context) error {
-	id := c.Param("id")
+	id := c.Param("checkout_id")
 
 	slog.Info("checkout show handler", slog.String("id", id))
 
@@ -180,7 +180,7 @@ func (s *Server) CheckoutsCreateHandler(c echo.Context) error {
 }
 
 type CheckoutUpdateRequest struct {
-	Id             string `param:"id"`
+	CheckoutId     string `param:"checkout_id"`
 	Name           string `form:"name"`
 	AddressLineOne string `form:"address_line_one"`
 	AddressLineTwo string `form:"address_line_two"`
@@ -199,16 +199,16 @@ func (s *Server) CheckoutsUpdateHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "bad request")
 	}
 
-	slog.Info("checkoutRecord show handler", "req", req, "id", req.Id)
+	slog.Info("checkoutRecord show handler", "req", req, "id", req.CheckoutId)
 
-	checkoutRecord, err := s.queries.FindCheckout(s.ctx, req.Id)
+	checkoutRecord, err := s.queries.FindCheckout(s.ctx, req.CheckoutId)
 
 	if err != nil {
 		slog.Info("checkoutRecord not found", "record", checkoutRecord, "err", err)
 		return c.String(http.StatusBadRequest, "checkoutRecord not found")
 	}
 
-	checkoutResponseRecord, err := s.queries.FindCheckoutResponse(s.ctx, req.Id)
+	checkoutResponseRecord, err := s.queries.FindCheckoutResponse(s.ctx, req.CheckoutId)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -265,8 +265,8 @@ func (s *Server) CheckoutsUpdateHandler(c echo.Context) error {
 }
 
 type CheckoutItemUpdateRequest struct {
-	Id       string `param:"id"`
-	Quantity string `form:"quantity"`
+	CheckoutItemId string `param:"checkout_item_id"`
+	Quantity       string `form:"quantity"`
 }
 
 func (s *Server) CheckoutItemsUpdateHandler(c echo.Context) error {
@@ -277,7 +277,7 @@ func (s *Server) CheckoutItemsUpdateHandler(c echo.Context) error {
 		return err
 	}
 
-	checkoutItem, err := s.queries.FindCheckoutItem(s.ctx, req.Id)
+	checkoutItem, err := s.queries.FindCheckoutItem(s.ctx, req.CheckoutItemId)
 
 	if err != nil {
 		return err
@@ -290,7 +290,7 @@ func (s *Server) CheckoutItemsUpdateHandler(c echo.Context) error {
 	}
 
 	if quantity <= 0 {
-		err = s.queries.DeleteCheckoutItem(s.ctx, req.Id)
+		err = s.queries.DeleteCheckoutItem(s.ctx, req.CheckoutItemId)
 
 		if err != nil {
 			return err
