@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE list
 (
-    id          TEXT PRIMARY KEY,
+    list_id          TEXT PRIMARY KEY,
     name        TEXT        NOT NULL,
     description TEXT        NOT NULL,
     share_code  TEXT UNIQUE NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE list
 );
 CREATE TABLE list_item
 (
-    id          TEXT PRIMARY KEY,
+    list_item_id          TEXT PRIMARY KEY,
     list_id TEXT      NOT NULL,
     link        TEXT      NOT NULL,
     name        TEXT      NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE list_item
     price       INTEGER   NOT NULL,
     created_at  TIMESTAMP NOT NULL,
     updated_at  TIMESTAMP NOT NULL,
-    FOREIGN KEY (list_id) REFERENCES list (id)
+    FOREIGN KEY (list_id) REFERENCES list (list_id)
 );
 -- +goose StatementEnd
 

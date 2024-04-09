@@ -14,7 +14,7 @@ type ListIndex struct {
 }
 
 type List struct {
-	ID          string
+	ListId      string
 	Name        string
 	Owner       string
 	Description string
@@ -27,19 +27,19 @@ type List struct {
 
 func ToList(list gateway.List) List {
 	return List{
-		ID:          list.ID,
+		ListId:      list.ListID,
 		Name:        list.Name,
 		Description: list.Description,
-		EditURL:     fmt.Sprintf("/admin/lists/%s/edit", list.ID),
-		ShowURL:     fmt.Sprintf("/admin/lists/%s", list.ID),
+		EditURL:     fmt.Sprintf("/admin/lists/%s/edit", list.ListID),
+		ShowURL:     fmt.Sprintf("/admin/lists/%s", list.ListID),
 		ShareURL:    fmt.Sprintf("/share/%s", list.ShareCode),
-		NewItemURL:  fmt.Sprintf("/admin/lists/%s/items/new", list.ID),
+		NewItemURL:  fmt.Sprintf("/admin/lists/%s/items/new", list.ListID),
 		ShareCode:   list.ShareCode,
 	}
 }
 
 type Item struct {
-	Id                string
+	ItemId            string
 	ListId            string
 	Link              string
 	ImageUrl          string
@@ -68,7 +68,7 @@ func ToItem(item gateway.ListItem) Item {
 	)
 
 	return Item{
-		Id:                item.ID,
+		ItemId:            item.ListItemID,
 		ListId:            item.ListID,
 		Name:              item.Name,
 		Link:              item.Link,
@@ -79,8 +79,8 @@ func ToItem(item gateway.ListItem) Item {
 		Quantity:          item.Quantity,
 		NeededQuantity:    fmt.Sprintf("%d", item.Quantity),
 		PurchasedQuantity: "0",
-		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ID),
-		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ID),
+		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ListItemID),
+		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ListItemID),
 		CheckoutUrl:       "/checkout",
 	}
 }
@@ -92,7 +92,7 @@ type FindListResponse struct {
 
 func (it *App) ListContainsItem(items []Item, itemId string) bool {
 	for _, item := range items {
-		if item.Id == itemId {
+		if item.ItemId == itemId {
 			return true
 		}
 	}
@@ -107,7 +107,7 @@ func (it *App) FindList(id string) (FindListResponse, error) {
 		return FindListResponse{}, err
 	}
 
-	items, err := it.Queries.FilerItemsForList(it.Ctx, list.ID)
+	items, err := it.Queries.FilerItemsForList(it.Ctx, list.ListID)
 
 	if err != nil {
 		return FindListResponse{}, err
@@ -120,24 +120,24 @@ func (it *App) FindList(id string) (FindListResponse, error) {
 }
 
 type UpdateListParams struct {
-	ID          string
+	ListId      string
 	Name        string
 	Description string
 }
 
 type UpdateListResponse struct {
-	Wishlist List
+	List List
 }
 
-func (it *App) UpdateWishlist(params UpdateListParams) (UpdateListResponse, error) {
-	wishlist, err := it.Queries.FindList(it.Ctx, params.ID)
+func (it *App) UpdateList(params UpdateListParams) (UpdateListResponse, error) {
+	wishlist, err := it.Queries.FindList(it.Ctx, params.ListId)
 
 	if err != nil {
 		return UpdateListResponse{}, err
 	}
 
 	err = it.Queries.UpdateList(it.Ctx, gateway.UpdateListParams{
-		ID:          wishlist.ID,
+		ListID:      wishlist.ListID,
 		Name:        params.Name,
 		Description: params.Description,
 		UpdatedAt:   time.Now(),
@@ -148,18 +148,18 @@ func (it *App) UpdateWishlist(params UpdateListParams) (UpdateListResponse, erro
 	}
 
 	return UpdateListResponse{
-		Wishlist: ToList(wishlist),
+		List: ToList(wishlist),
 	}, nil
 }
 
-func (it *App) DeleteWishlist(id string) error {
+func (it *App) DeleteList(id string) error {
 	list, err := it.Queries.FindList(it.Ctx, id)
 
 	if err != nil {
 		return err
 	}
 
-	err = it.Queries.DeleteList(it.Ctx, list.ID)
+	err = it.Queries.DeleteList(it.Ctx, list.ListID)
 
 	if err != nil {
 		return err

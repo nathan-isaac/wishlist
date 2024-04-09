@@ -18,7 +18,7 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	items, err := s.queries.FilerItemsForList(s.ctx, wishlist.ID)
+	items, err := s.queries.FilerItemsForList(s.ctx, wishlist.ListID)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
@@ -32,7 +32,7 @@ func (s *Server) ShareShowHandler(c echo.Context) error {
 	}
 
 	return Render(c, share.ShareView(domain.Share{
-		Id:          wishlist.ID,
+		Id:          wishlist.ListID,
 		Code:        code,
 		List:        domain.ToList(wishlist),
 		Items:       utils.Map(items, domain.ToItem),

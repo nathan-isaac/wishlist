@@ -6,7 +6,7 @@ import (
 )
 
 type Checkout struct {
-	ID            string
+	CheckoutId    string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	List          List
@@ -15,7 +15,7 @@ type Checkout struct {
 }
 
 func (c Checkout) UpdateUrl() string {
-	return fmt.Sprintf("/checkout/%s", c.ID)
+	return fmt.Sprintf("/checkout/%s", c.CheckoutId)
 }
 
 type CheckoutItem struct {

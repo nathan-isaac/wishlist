@@ -43,8 +43,8 @@ func (s *Server) ListsEditHandler(c echo.Context) error {
 func (s *Server) ListsUpdateHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	response, err := s.domain.UpdateWishlist(domain.UpdateListParams{
-		ID:          id,
+	response, err := s.domain.UpdateList(domain.UpdateListParams{
+		ListId:      id,
 		Name:        c.FormValue("name"),
 		Description: c.FormValue("description"),
 	})
@@ -53,13 +53,13 @@ func (s *Server) ListsUpdateHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error updating wishlist: %s", err))
 	}
 
-	return HxRedirect(c, fmt.Sprintf("/admin/lists/%s", response.Wishlist.ID))
+	return HxRedirect(c, fmt.Sprintf("/admin/lists/%s", response.List.ListId))
 }
 
 func (s *Server) ListsDeleteHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	err := s.domain.DeleteWishlist(id)
+	err := s.domain.DeleteList(id)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error deleting wishlist: %s", err))
@@ -104,7 +104,7 @@ func (s *Server) ListsCreateHandler(c echo.Context) error {
 	}
 
 	err = s.queries.CreateList(s.ctx, gateway.CreateListParams{
-		ID:          id,
+		ListID:      id,
 		Name:        name,
 		Description: description,
 		ShareCode:   shareId,
@@ -178,7 +178,7 @@ func parsePriceInput(price string) (int64, error) {
 }
 
 func (s *Server) ItemsCreateHandler(c echo.Context) error {
-	wishlistId := c.FormValue("wishlist_id")
+	wishlistId := c.FormValue("list_id")
 
 	wishlist, err := s.queries.FindList(s.ctx, wishlistId)
 
@@ -199,7 +199,7 @@ func (s *Server) ItemsCreateHandler(c echo.Context) error {
 	}
 
 	err = s.queries.CreateListItem(s.ctx, gateway.CreateListItemParams{
-		ID:          id,
+		ListItemID:  id,
 		ListID:      wishlistId,
 		Name:        itemInput.Name,
 		Description: itemInput.Description,
@@ -215,7 +215,7 @@ func (s *Server) ItemsCreateHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error creating wishlist: %s", err))
 	}
 
-	return c.Redirect(http.StatusFound, fmt.Sprintf("/admin/lists/%s", wishlist.ID))
+	return c.Redirect(http.StatusFound, fmt.Sprintf("/admin/lists/%s", wishlist.ListID))
 }
 
 func (s *Server) ItemsEditHandler(c echo.Context) error {
@@ -254,7 +254,7 @@ func (s *Server) ItemsUpdateHandler(c echo.Context) error {
 	}
 
 	err = s.queries.UpdateItem(s.ctx, gateway.UpdateItemParams{
-		ID:          listItem.ID,
+		ListItemID:  listItem.ListItemID,
 		Name:        itemInput.Name,
 		Description: itemInput.Description,
 		Link:        itemInput.Link,
@@ -280,7 +280,7 @@ func (s *Server) ItemsDeleteHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist: %s", err))
 	}
 
-	err = s.queries.DeleteItem(s.ctx, listItem.ID)
+	err = s.queries.DeleteItem(s.ctx, listItem.ListItemID)
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error updating wishlist: %s", err))

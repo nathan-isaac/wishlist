@@ -11,20 +11,20 @@ import (
 )
 
 const createCheckout = `-- name: CreateCheckout :exec
-INSERT INTO checkout (id, list_id, created_at, updated_at)
+INSERT INTO checkout (checkout_id, list_id, created_at, updated_at)
 VALUES (?, ?, ?, ?)
 `
 
 type CreateCheckoutParams struct {
-	ID        string
-	ListID    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CheckoutID string
+	ListID     string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 func (q *Queries) CreateCheckout(ctx context.Context, arg CreateCheckoutParams) error {
 	_, err := q.db.ExecContext(ctx, createCheckout,
-		arg.ID,
+		arg.CheckoutID,
 		arg.ListID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
@@ -33,22 +33,22 @@ func (q *Queries) CreateCheckout(ctx context.Context, arg CreateCheckoutParams) 
 }
 
 const createCheckoutItem = `-- name: CreateCheckoutItem :exec
-INSERT INTO checkout_item (id, checkout_id, list_item_id, quantity, created_at, updated_at)
+INSERT INTO checkout_item (checkout_item_id, checkout_id, list_item_id, quantity, created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?)
 `
 
 type CreateCheckoutItemParams struct {
-	ID         string
-	CheckoutID string
-	ListItemID string
-	Quantity   int64
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	CheckoutItemID string
+	CheckoutID     string
+	ListItemID     string
+	Quantity       int64
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 func (q *Queries) CreateCheckoutItem(ctx context.Context, arg CreateCheckoutItemParams) error {
 	_, err := q.db.ExecContext(ctx, createCheckoutItem,
-		arg.ID,
+		arg.CheckoutItemID,
 		arg.CheckoutID,
 		arg.ListItemID,
 		arg.Quantity,
@@ -59,28 +59,28 @@ func (q *Queries) CreateCheckoutItem(ctx context.Context, arg CreateCheckoutItem
 }
 
 const createCheckoutResponse = `-- name: CreateCheckoutResponse :exec
-INSERT INTO checkout_response (id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message,
+INSERT INTO checkout_response (checkout_response_id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message,
                                created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateCheckoutResponseParams struct {
-	ID             string
-	CheckoutID     string
-	Name           string
-	AddressLineOne string
-	AddressLineTwo string
-	City           string
-	State          string
-	Zip            string
-	Message        string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	CheckoutResponseID string
+	CheckoutID         string
+	Name               string
+	AddressLineOne     string
+	AddressLineTwo     string
+	City               string
+	State              string
+	Zip                string
+	Message            string
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
 }
 
 func (q *Queries) CreateCheckoutResponse(ctx context.Context, arg CreateCheckoutResponseParams) error {
 	_, err := q.db.ExecContext(ctx, createCheckoutResponse,
-		arg.ID,
+		arg.CheckoutResponseID,
 		arg.CheckoutID,
 		arg.Name,
 		arg.AddressLineOne,
@@ -97,19 +97,19 @@ func (q *Queries) CreateCheckoutResponse(ctx context.Context, arg CreateCheckout
 
 const deleteCheckoutItem = `-- name: DeleteCheckoutItem :exec
 DELETE FROM checkout_item
-where id = ?
+where checkout_item_id = ?
 `
 
-func (q *Queries) DeleteCheckoutItem(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteCheckoutItem, id)
+func (q *Queries) DeleteCheckoutItem(ctx context.Context, checkoutItemID string) error {
+	_, err := q.db.ExecContext(ctx, deleteCheckoutItem, checkoutItemID)
 	return err
 }
 
 const filterCheckoutItems = `-- name: FilterCheckoutItems :many
-SELECT checkout_item.id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
+SELECT checkout_item.checkout_item_id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.list_item_id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
 FROM checkout_item
-         join list_item on checkout_item.list_item_id = list_item.id
-WHERE checkout_id = ?
+         join list_item on checkout_item.list_item_id = list_item.list_item_id
+WHERE checkout_item.checkout_id = ?
 `
 
 type FilterCheckoutItemsRow struct {
@@ -127,13 +127,13 @@ func (q *Queries) FilterCheckoutItems(ctx context.Context, checkoutID string) ([
 	for rows.Next() {
 		var i FilterCheckoutItemsRow
 		if err := rows.Scan(
-			&i.CheckoutItem.ID,
+			&i.CheckoutItem.CheckoutItemID,
 			&i.CheckoutItem.CheckoutID,
 			&i.CheckoutItem.ListItemID,
 			&i.CheckoutItem.Quantity,
 			&i.CheckoutItem.CreatedAt,
 			&i.CheckoutItem.UpdatedAt,
-			&i.ListItem.ID,
+			&i.ListItem.ListItemID,
 			&i.ListItem.ListID,
 			&i.ListItem.Link,
 			&i.ListItem.Name,
@@ -158,10 +158,10 @@ func (q *Queries) FilterCheckoutItems(ctx context.Context, checkoutID string) ([
 }
 
 const findCheckout = `-- name: FindCheckout :one
-SELECT checkout.id, checkout.list_id, checkout.created_at, checkout.updated_at, list.id, list.name, list.description, list.share_code, list.public, list.created_at, list.updated_at
+SELECT checkout.checkout_id, checkout.list_id, checkout.created_at, checkout.updated_at, list.list_id, list.name, list.description, list.share_code, list.public, list.created_at, list.updated_at
 FROM checkout
-         JOIN list on checkout.list_id = list.id
-WHERE checkout.id = ?
+         JOIN list on checkout.list_id = list.list_id
+WHERE checkout.checkout_id = ?
 LIMIT 1
 `
 
@@ -170,15 +170,15 @@ type FindCheckoutRow struct {
 	List     List
 }
 
-func (q *Queries) FindCheckout(ctx context.Context, id string) (FindCheckoutRow, error) {
-	row := q.db.QueryRowContext(ctx, findCheckout, id)
+func (q *Queries) FindCheckout(ctx context.Context, checkoutID string) (FindCheckoutRow, error) {
+	row := q.db.QueryRowContext(ctx, findCheckout, checkoutID)
 	var i FindCheckoutRow
 	err := row.Scan(
-		&i.Checkout.ID,
+		&i.Checkout.CheckoutID,
 		&i.Checkout.ListID,
 		&i.Checkout.CreatedAt,
 		&i.Checkout.UpdatedAt,
-		&i.List.ID,
+		&i.List.ListID,
 		&i.List.Name,
 		&i.List.Description,
 		&i.List.ShareCode,
@@ -190,10 +190,10 @@ func (q *Queries) FindCheckout(ctx context.Context, id string) (FindCheckoutRow,
 }
 
 const findCheckoutItem = `-- name: FindCheckoutItem :one
-SELECT checkout_item.id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
+SELECT checkout_item.checkout_item_id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.list_item_id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
 FROM checkout_item
-         join list_item on checkout_item.list_item_id = list_item.id
-WHERE checkout_item.id = ?
+         join list_item on checkout_item.list_item_id = list_item.list_item_id
+WHERE checkout_item.checkout_item_id = ?
 `
 
 type FindCheckoutItemRow struct {
@@ -201,17 +201,17 @@ type FindCheckoutItemRow struct {
 	ListItem     ListItem
 }
 
-func (q *Queries) FindCheckoutItem(ctx context.Context, id string) (FindCheckoutItemRow, error) {
-	row := q.db.QueryRowContext(ctx, findCheckoutItem, id)
+func (q *Queries) FindCheckoutItem(ctx context.Context, checkoutItemID string) (FindCheckoutItemRow, error) {
+	row := q.db.QueryRowContext(ctx, findCheckoutItem, checkoutItemID)
 	var i FindCheckoutItemRow
 	err := row.Scan(
-		&i.CheckoutItem.ID,
+		&i.CheckoutItem.CheckoutItemID,
 		&i.CheckoutItem.CheckoutID,
 		&i.CheckoutItem.ListItemID,
 		&i.CheckoutItem.Quantity,
 		&i.CheckoutItem.CreatedAt,
 		&i.CheckoutItem.UpdatedAt,
-		&i.ListItem.ID,
+		&i.ListItem.ListItemID,
 		&i.ListItem.ListID,
 		&i.ListItem.Link,
 		&i.ListItem.Name,
@@ -226,11 +226,11 @@ func (q *Queries) FindCheckoutItem(ctx context.Context, id string) (FindCheckout
 }
 
 const findCheckoutItemByItemId = `-- name: FindCheckoutItemByItemId :one
-SELECT checkout_item.id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
+SELECT checkout_item.checkout_item_id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.list_item_id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at
 FROM checkout_item
-         join list_item on checkout_item.list_item_id = list_item.id
-WHERE checkout_id = ?
-  and list_item_id = ?
+         join list_item on checkout_item.list_item_id = list_item.list_item_id
+WHERE checkout_item.checkout_id = ?
+  and checkout_item.list_item_id = ?
 `
 
 type FindCheckoutItemByItemIdParams struct {
@@ -247,13 +247,13 @@ func (q *Queries) FindCheckoutItemByItemId(ctx context.Context, arg FindCheckout
 	row := q.db.QueryRowContext(ctx, findCheckoutItemByItemId, arg.CheckoutID, arg.ListItemID)
 	var i FindCheckoutItemByItemIdRow
 	err := row.Scan(
-		&i.CheckoutItem.ID,
+		&i.CheckoutItem.CheckoutItemID,
 		&i.CheckoutItem.CheckoutID,
 		&i.CheckoutItem.ListItemID,
 		&i.CheckoutItem.Quantity,
 		&i.CheckoutItem.CreatedAt,
 		&i.CheckoutItem.UpdatedAt,
-		&i.ListItem.ID,
+		&i.ListItem.ListItemID,
 		&i.ListItem.ListID,
 		&i.ListItem.Link,
 		&i.ListItem.Name,
@@ -268,7 +268,7 @@ func (q *Queries) FindCheckoutItemByItemId(ctx context.Context, arg FindCheckout
 }
 
 const findCheckoutResponse = `-- name: FindCheckoutResponse :one
-SELECT id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message, created_at, updated_at
+SELECT checkout_response_id, checkout_id, name, address_line_one, address_line_two, city, state, zip, message, created_at, updated_at
 FROM checkout_response
 WHERE checkout_id = ?
 LIMIT 1
@@ -278,7 +278,7 @@ func (q *Queries) FindCheckoutResponse(ctx context.Context, checkoutID string) (
 	row := q.db.QueryRowContext(ctx, findCheckoutResponse, checkoutID)
 	var i CheckoutResponse
 	err := row.Scan(
-		&i.ID,
+		&i.CheckoutResponseID,
 		&i.CheckoutID,
 		&i.Name,
 		&i.AddressLineOne,
@@ -296,16 +296,16 @@ func (q *Queries) FindCheckoutResponse(ctx context.Context, checkoutID string) (
 const updateCheckout = `-- name: UpdateCheckout :exec
 UPDATE checkout
 SET updated_at = ?
-WHERE id = ?
+WHERE checkout_id = ?
 `
 
 type UpdateCheckoutParams struct {
-	UpdatedAt time.Time
-	ID        string
+	UpdatedAt  time.Time
+	CheckoutID string
 }
 
 func (q *Queries) UpdateCheckout(ctx context.Context, arg UpdateCheckoutParams) error {
-	_, err := q.db.ExecContext(ctx, updateCheckout, arg.UpdatedAt, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateCheckout, arg.UpdatedAt, arg.CheckoutID)
 	return err
 }
 
@@ -313,17 +313,17 @@ const updateCheckoutItem = `-- name: UpdateCheckoutItem :exec
 UPDATE checkout_item
 SET quantity   = ?,
     updated_at = ?
-WHERE id = ?
+WHERE checkout_item_id = ?
 `
 
 type UpdateCheckoutItemParams struct {
-	Quantity  int64
-	UpdatedAt time.Time
-	ID        string
+	Quantity       int64
+	UpdatedAt      time.Time
+	CheckoutItemID string
 }
 
 func (q *Queries) UpdateCheckoutItem(ctx context.Context, arg UpdateCheckoutItemParams) error {
-	_, err := q.db.ExecContext(ctx, updateCheckoutItem, arg.Quantity, arg.UpdatedAt, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateCheckoutItem, arg.Quantity, arg.UpdatedAt, arg.CheckoutItemID)
 	return err
 }
 
@@ -337,19 +337,19 @@ SET name             = ?,
     zip              = ?,
     message          = ?,
     updated_at       = ?
-WHERE id = ?
+WHERE checkout_response_id = ?
 `
 
 type UpdateCheckoutResponseParams struct {
-	Name           string
-	AddressLineOne string
-	AddressLineTwo string
-	City           string
-	State          string
-	Zip            string
-	Message        string
-	UpdatedAt      time.Time
-	ID             string
+	Name               string
+	AddressLineOne     string
+	AddressLineTwo     string
+	City               string
+	State              string
+	Zip                string
+	Message            string
+	UpdatedAt          time.Time
+	CheckoutResponseID string
 }
 
 func (q *Queries) UpdateCheckoutResponse(ctx context.Context, arg UpdateCheckoutResponseParams) error {
@@ -362,7 +362,7 @@ func (q *Queries) UpdateCheckoutResponse(ctx context.Context, arg UpdateCheckout
 		arg.Zip,
 		arg.Message,
 		arg.UpdatedAt,
-		arg.ID,
+		arg.CheckoutResponseID,
 	)
 	return err
 }

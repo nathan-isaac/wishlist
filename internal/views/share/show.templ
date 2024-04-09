@@ -63,7 +63,7 @@ templ ShareView(share domain.Share) {
 									hx-post={ item.CheckoutUrl }
 								>
 									<input type="hidden" name="list_id" value={ item.ListId }/>
-									<input type="hidden" name="item_id" value={ item.Id }/>
+									<input type="hidden" name="item_id" value={ item.ItemId }/>
 									<input type="hidden" name="checkout_id" value={ share.CheckoutId }/>
 									<button
 										type="submit"

@@ -11,12 +11,12 @@ import (
 )
 
 const createList = `-- name: CreateList :exec
-INSERT INTO list (id, name, description, share_code, public, created_at, updated_at)
+INSERT INTO list (list_id, name, description, share_code, public, created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateListParams struct {
-	ID          string
+	ListID      string
 	Name        string
 	Description string
 	ShareCode   string
@@ -27,7 +27,7 @@ type CreateListParams struct {
 
 func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) error {
 	_, err := q.db.ExecContext(ctx, createList,
-		arg.ID,
+		arg.ListID,
 		arg.Name,
 		arg.Description,
 		arg.ShareCode,
@@ -39,12 +39,12 @@ func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) error {
 }
 
 const createListItem = `-- name: CreateListItem :exec
-INSERT INTO list_item (id, list_id, name, link, image_url, description, quantity, price, created_at, updated_at)
+INSERT INTO list_item (list_item_id, list_id, name, link, image_url, description, quantity, price, created_at, updated_at)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateListItemParams struct {
-	ID          string
+	ListItemID  string
 	ListID      string
 	Name        string
 	Link        string
@@ -58,7 +58,7 @@ type CreateListItemParams struct {
 
 func (q *Queries) CreateListItem(ctx context.Context, arg CreateListItemParams) error {
 	_, err := q.db.ExecContext(ctx, createListItem,
-		arg.ID,
+		arg.ListItemID,
 		arg.ListID,
 		arg.Name,
 		arg.Link,
@@ -75,27 +75,27 @@ func (q *Queries) CreateListItem(ctx context.Context, arg CreateListItemParams) 
 const deleteItem = `-- name: DeleteItem :exec
 DELETE
 FROM list_item
-WHERE id = ?
+WHERE list_item_id = ?
 `
 
-func (q *Queries) DeleteItem(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteItem, id)
+func (q *Queries) DeleteItem(ctx context.Context, listItemID string) error {
+	_, err := q.db.ExecContext(ctx, deleteItem, listItemID)
 	return err
 }
 
 const deleteList = `-- name: DeleteList :exec
 DELETE
 FROM list
-WHERE id = ?
+WHERE list_id = ?
 `
 
-func (q *Queries) DeleteList(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteList, id)
+func (q *Queries) DeleteList(ctx context.Context, listID string) error {
+	_, err := q.db.ExecContext(ctx, deleteList, listID)
 	return err
 }
 
 const filerItemsForList = `-- name: FilerItemsForList :many
-SELECT id, list_id, link, name, description, image_url, quantity, price, created_at, updated_at
+SELECT list_item_id, list_id, link, name, description, image_url, quantity, price, created_at, updated_at
 FROM list_item
 WHERE list_id = ?
 ORDER BY name
@@ -111,7 +111,7 @@ func (q *Queries) FilerItemsForList(ctx context.Context, listID string) ([]ListI
 	for rows.Next() {
 		var i ListItem
 		if err := rows.Scan(
-			&i.ID,
+			&i.ListItemID,
 			&i.ListID,
 			&i.Link,
 			&i.Name,
@@ -136,7 +136,7 @@ func (q *Queries) FilerItemsForList(ctx context.Context, listID string) ([]ListI
 }
 
 const filterLists = `-- name: FilterLists :many
-SELECT id, name, description, share_code, public, created_at, updated_at
+SELECT list_id, name, description, share_code, public, created_at, updated_at
 FROM list
 ORDER BY name
 `
@@ -151,7 +151,7 @@ func (q *Queries) FilterLists(ctx context.Context) ([]List, error) {
 	for rows.Next() {
 		var i List
 		if err := rows.Scan(
-			&i.ID,
+			&i.ListID,
 			&i.Name,
 			&i.Description,
 			&i.ShareCode,
@@ -173,16 +173,16 @@ func (q *Queries) FilterLists(ctx context.Context) ([]List, error) {
 }
 
 const findItem = `-- name: FindItem :one
-SELECT id, list_id, link, name, description, image_url, quantity, price, created_at, updated_at
+SELECT list_item_id, list_id, link, name, description, image_url, quantity, price, created_at, updated_at
 FROM list_item
-WHERE id = ?
+WHERE list_item_id = ?
 `
 
-func (q *Queries) FindItem(ctx context.Context, id string) (ListItem, error) {
-	row := q.db.QueryRowContext(ctx, findItem, id)
+func (q *Queries) FindItem(ctx context.Context, listItemID string) (ListItem, error) {
+	row := q.db.QueryRowContext(ctx, findItem, listItemID)
 	var i ListItem
 	err := row.Scan(
-		&i.ID,
+		&i.ListItemID,
 		&i.ListID,
 		&i.Link,
 		&i.Name,
@@ -197,17 +197,17 @@ func (q *Queries) FindItem(ctx context.Context, id string) (ListItem, error) {
 }
 
 const findList = `-- name: FindList :one
-SELECT id, name, description, share_code, public, created_at, updated_at
+SELECT list_id, name, description, share_code, public, created_at, updated_at
 FROM list
-WHERE id = ?
+WHERE list_id = ?
 LIMIT 1
 `
 
-func (q *Queries) FindList(ctx context.Context, id string) (List, error) {
-	row := q.db.QueryRowContext(ctx, findList, id)
+func (q *Queries) FindList(ctx context.Context, listID string) (List, error) {
+	row := q.db.QueryRowContext(ctx, findList, listID)
 	var i List
 	err := row.Scan(
-		&i.ID,
+		&i.ListID,
 		&i.Name,
 		&i.Description,
 		&i.ShareCode,
@@ -219,7 +219,7 @@ func (q *Queries) FindList(ctx context.Context, id string) (List, error) {
 }
 
 const findListByShareCode = `-- name: FindListByShareCode :one
-SELECT id, name, description, share_code, public, created_at, updated_at
+SELECT list_id, name, description, share_code, public, created_at, updated_at
 FROM list
 WHERE share_code = ?
 LIMIT 1
@@ -229,7 +229,7 @@ func (q *Queries) FindListByShareCode(ctx context.Context, shareCode string) (Li
 	row := q.db.QueryRowContext(ctx, findListByShareCode, shareCode)
 	var i List
 	err := row.Scan(
-		&i.ID,
+		&i.ListID,
 		&i.Name,
 		&i.Description,
 		&i.ShareCode,
@@ -249,7 +249,7 @@ set name        = ?,
     quantity    = ?,
     price       = ?,
     updated_at  = ?
-WHERE id = ?
+WHERE list_item_id = ?
 `
 
 type UpdateItemParams struct {
@@ -260,7 +260,7 @@ type UpdateItemParams struct {
 	Quantity    int64
 	Price       int64
 	UpdatedAt   time.Time
-	ID          string
+	ListItemID  string
 }
 
 func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) error {
@@ -272,7 +272,7 @@ func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) error {
 		arg.Quantity,
 		arg.Price,
 		arg.UpdatedAt,
-		arg.ID,
+		arg.ListItemID,
 	)
 	return err
 }
@@ -282,14 +282,14 @@ UPDATE list
 set name        = ?,
     description = ?,
     updated_at  = ?
-WHERE id = ?
+WHERE list_id = ?
 `
 
 type UpdateListParams struct {
 	Name        string
 	Description string
 	UpdatedAt   time.Time
-	ID          string
+	ListID      string
 }
 
 func (q *Queries) UpdateList(ctx context.Context, arg UpdateListParams) error {
@@ -297,7 +297,7 @@ func (q *Queries) UpdateList(ctx context.Context, arg UpdateListParams) error {
 		arg.Name,
 		arg.Description,
 		arg.UpdatedAt,
-		arg.ID,
+		arg.ListID,
 	)
 	return err
 }

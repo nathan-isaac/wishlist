@@ -22,7 +22,7 @@ templ ItemNewView(list domain.List) {
 							<p class="mt-1 text-sm leading-6 text-gray-600">Description of wishlist item.</p>
 						</div>
 						<form method="post" action="/admin/items" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-							<input type="hidden" name="wishlist_id" value={ list.ID }/>
+							<input type="hidden" name="list_id" value={ list.ListId }/>
 							<div class="px-4 py-6 sm:p-8">
 								<div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 									<div class="sm:col-span-4">

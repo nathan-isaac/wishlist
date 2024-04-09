@@ -36,18 +36,18 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 	checkoutResponse, err := s.queries.FindCheckoutResponse(s.ctx, id)
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "error fetching checkout response")
+		checkoutResponse = gateway.CheckoutResponse{}
 	}
 
 	return Render(c, checkout.CheckoutShowView(checkout.CheckoutShowParams{
 		Checkout: domain.Checkout{
-			ID:        checkoutRecord.Checkout.ID,
-			CreatedAt: checkoutRecord.Checkout.CreatedAt,
-			UpdatedAt: checkoutRecord.Checkout.UpdatedAt,
-			List:      domain.ToList(checkoutRecord.List),
+			CheckoutId: checkoutRecord.Checkout.CheckoutID,
+			CreatedAt:  checkoutRecord.Checkout.CreatedAt,
+			UpdatedAt:  checkoutRecord.Checkout.UpdatedAt,
+			List:       domain.ToList(checkoutRecord.List),
 			CheckoutItems: utils.Map(itemRecords, func(t gateway.FilterCheckoutItemsRow) domain.CheckoutItem {
 				return domain.CheckoutItem{
-					ID:         t.CheckoutItem.ID,
+					ID:         t.CheckoutItem.CheckoutItemID,
 					CheckoutID: t.CheckoutItem.CheckoutID,
 					Quantity:   t.CheckoutItem.Quantity,
 					CreatedAt:  t.CheckoutItem.CreatedAt,
@@ -56,7 +56,7 @@ func (s *Server) CheckoutShowHandler(c echo.Context) error {
 				}
 			}),
 			Response: domain.CheckoutResponse{
-				ID:             checkoutResponse.ID,
+				ID:             checkoutResponse.CheckoutResponseID,
 				CheckoutID:     checkoutResponse.CheckoutID,
 				Name:           checkoutResponse.Name,
 				AddressLineOne: checkoutResponse.AddressLineOne,
@@ -103,27 +103,28 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 			return c.String(http.StatusInternalServerError, "error fetching checkout id")
 		}
 
-		checkoutId, err := domain.GenerateId()
+		newId, err := domain.GenerateId()
+		checkoutId = newId
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "error generating checkout id")
 		}
 
 		err = s.queries.CreateCheckout(s.ctx, gateway.CreateCheckoutParams{
-			ID:        checkoutId,
-			ListID:    req.ListId,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+			CheckoutID: checkoutId,
+			ListID:     req.ListId,
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
 		})
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "error creating checkout")
 		}
 	} else {
-		checkoutId = checkoutResponse.Checkout.ID
+		checkoutId = checkoutResponse.Checkout.CheckoutID
 		err = s.queries.UpdateCheckout(s.ctx, gateway.UpdateCheckoutParams{
-			UpdatedAt: time.Now(),
-			ID:        checkoutId,
+			UpdatedAt:  time.Now(),
+			CheckoutID: checkoutId,
 		})
 
 		if err != nil {
@@ -142,31 +143,32 @@ func (s *Server) CheckoutCreateHandler(c echo.Context) error {
 			return err
 		}
 
-		itemId, err := domain.GenerateId()
+		newId, err := domain.GenerateId()
+		itemId = newId
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "error generating checkout item id")
 		}
 
 		err = s.queries.CreateCheckoutItem(s.ctx, gateway.CreateCheckoutItemParams{
-			ID:         itemId,
-			CheckoutID: checkoutId,
-			ListItemID: req.ItemId,
-			Quantity:   1,
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			CheckoutItemID: itemId,
+			CheckoutID:     checkoutId,
+			ListItemID:     req.ItemId,
+			Quantity:       1,
+			CreatedAt:      time.Now(),
+			UpdatedAt:      time.Now(),
 		})
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "error creating checkout item")
 		}
 	} else {
-		itemId = checkoutItem.CheckoutItem.ID
+		itemId = checkoutItem.CheckoutItem.CheckoutItemID
 
 		err = s.queries.UpdateCheckoutItem(s.ctx, gateway.UpdateCheckoutItemParams{
-			Quantity:  checkoutItem.CheckoutItem.Quantity + 1,
-			UpdatedAt: time.Now(),
-			ID:        itemId,
+			Quantity:       checkoutItem.CheckoutItem.Quantity + 1,
+			UpdatedAt:      time.Now(),
+			CheckoutItemID: itemId,
 		})
 
 		if err != nil {
@@ -217,17 +219,17 @@ func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
 			}
 
 			err = s.queries.CreateCheckoutResponse(s.ctx, gateway.CreateCheckoutResponseParams{
-				ID:             responseId,
-				CheckoutID:     checkoutRecord.Checkout.ID,
-				Name:           req.Name,
-				AddressLineOne: req.AddressLineOne,
-				AddressLineTwo: req.AddressLineTwo,
-				City:           req.City,
-				State:          req.Region,
-				Zip:            req.PostalCode,
-				Message:        req.Message,
-				CreatedAt:      time.Now(),
-				UpdatedAt:      time.Now(),
+				CheckoutResponseID: responseId,
+				CheckoutID:         checkoutRecord.Checkout.CheckoutID,
+				Name:               req.Name,
+				AddressLineOne:     req.AddressLineOne,
+				AddressLineTwo:     req.AddressLineTwo,
+				City:               req.City,
+				State:              req.Region,
+				Zip:                req.PostalCode,
+				Message:            req.Message,
+				CreatedAt:          time.Now(),
+				UpdatedAt:          time.Now(),
 			})
 
 			if err != nil {
@@ -240,15 +242,15 @@ func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
 	}
 
 	err = s.queries.UpdateCheckoutResponse(s.ctx, gateway.UpdateCheckoutResponseParams{
-		Name:           req.Name,
-		AddressLineOne: req.AddressLineOne,
-		AddressLineTwo: req.AddressLineTwo,
-		City:           req.City,
-		State:          req.Region,
-		Zip:            req.PostalCode,
-		Message:        req.Message,
-		UpdatedAt:      time.Now(),
-		ID:             checkoutResponseRecord.ID,
+		Name:               req.Name,
+		AddressLineOne:     req.AddressLineOne,
+		AddressLineTwo:     req.AddressLineTwo,
+		City:               req.City,
+		State:              req.Region,
+		Zip:                req.PostalCode,
+		Message:            req.Message,
+		UpdatedAt:          time.Now(),
+		CheckoutResponseID: checkoutResponseRecord.CheckoutResponseID,
 	})
 
 	if err != nil {
@@ -256,7 +258,7 @@ func (s *Server) CheckoutUpdateHandler(c echo.Context) error {
 	}
 
 	redirectParams := url.Values{
-		"checkoutId": {checkoutRecord.Checkout.ID},
+		"checkoutId": {checkoutRecord.Checkout.CheckoutID},
 	}
 
 	return HxRedirect(c, fmt.Sprintf("/share/%s?%s", checkoutRecord.List.ShareCode, redirectParams.Encode()))
@@ -298,9 +300,9 @@ func (s *Server) CheckoutItemUpdateHandler(c echo.Context) error {
 	}
 
 	err = s.queries.UpdateCheckoutItem(s.ctx, gateway.UpdateCheckoutItemParams{
-		Quantity:  quantity,
-		UpdatedAt: time.Now(),
-		ID:        checkoutItem.CheckoutItem.ID,
+		Quantity:       quantity,
+		UpdatedAt:      time.Now(),
+		CheckoutItemID: checkoutItem.CheckoutItem.CheckoutItemID,
 	})
 
 	if err != nil {

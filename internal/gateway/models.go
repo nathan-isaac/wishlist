@@ -9,37 +9,37 @@ import (
 )
 
 type Checkout struct {
-	ID        string
-	ListID    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-type CheckoutItem struct {
-	ID         string
 	CheckoutID string
-	ListItemID string
-	Quantity   int64
+	ListID     string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
 
-type CheckoutResponse struct {
-	ID             string
+type CheckoutItem struct {
+	CheckoutItemID string
 	CheckoutID     string
-	Name           string
-	AddressLineOne string
-	AddressLineTwo string
-	City           string
-	State          string
-	Zip            string
-	Message        string
+	ListItemID     string
+	Quantity       int64
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
 
+type CheckoutResponse struct {
+	CheckoutResponseID string
+	CheckoutID         string
+	Name               string
+	AddressLineOne     string
+	AddressLineTwo     string
+	City               string
+	State              string
+	Zip                string
+	Message            string
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
+}
+
 type List struct {
-	ID          string
+	ListID      string
 	Name        string
 	Description string
 	ShareCode   string
@@ -49,7 +49,7 @@ type List struct {
 }
 
 type ListItem struct {
-	ID          string
+	ListItemID  string
 	ListID      string
 	Link        string
 	Name        string
