@@ -20,8 +20,9 @@ RUN templ generate
 RUN GOOS=linux go build -o /app/bin/main /app/cmd/api/main.go
 
 
-FROM scratch
+FROM alpine:3.19.1
 WORKDIR /app
+RUN apk add --no-cache ca-certificates
 
 COPY --from=builder /app/bin/main /app/wishlist
 
