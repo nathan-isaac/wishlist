@@ -4,6 +4,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 WORKDIR /app
 COPY pnpm-lock.yaml package.json input.css ./
+COPY . ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm tailwindcss -i ./input.css -o ./cmd/web/assets/tailwind.css
 
