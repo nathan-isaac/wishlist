@@ -8,18 +8,24 @@ import (
 )
 
 func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	err := godotenv.Load()
 
 	if err != nil {
-		slog.Warn("Error loading .env file", "error", err)
+		logger.Warn("Error loading .env file", "error", err)
 	}
 
-	s := server.NewServer()
+	s, err := server.NewServer()
+
+	if err != nil {
+		logger.Error("Error initializing server", "error", err)
+	}
 
 	err = s.ListenAndServe()
 
 	if err != nil {
-		slog.Error("Error starting server", "error", err)
+		logger.Error("Error starting server", "error", err)
 		os.Exit(1)
 	}
 }

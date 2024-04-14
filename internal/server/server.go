@@ -36,7 +36,7 @@ type Wishlist struct {
 	Description string
 }
 
-func NewServer() *http.Server {
+func NewServer() (*http.Server, error) {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	host := os.Getenv("HOST")
 	database := os.Getenv("DATABASE_URL")
@@ -44,7 +44,7 @@ func NewServer() *http.Server {
 	db, err := sql.Open("sqlite3", database)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	ctx := context.Background()
@@ -75,5 +75,5 @@ func NewServer() *http.Server {
 		WriteTimeout: 30 * time.Second,
 	}
 
-	return server
+	return server, nil
 }
