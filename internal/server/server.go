@@ -12,7 +12,7 @@ import (
 	"wishlist/internal/gateway"
 
 	_ "github.com/joho/godotenv/autoload"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 type AdminUser struct {
@@ -107,7 +107,7 @@ func NewServer() (*http.Server, error) {
 		return nil, err
 	}
 
-	db, err := sql.Open("sqlite3", options.DatabaseUrl)
+	db, err := sql.Open("libsql", options.DatabaseUrl)
 
 	if err != nil {
 		return nil, err
