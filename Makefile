@@ -11,6 +11,7 @@ build:
 
 build_dev:
 	@echo "Building..."
+	@templ generate
 	@go build -o ./bin/main cmd/api/main.go
 
 # Tailwind generation watch

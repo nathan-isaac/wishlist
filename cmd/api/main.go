@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/joho/godotenv"
-	"log"
+	"log/slog"
+	"os"
 	"wishlist/internal/server"
 )
 
@@ -11,7 +11,7 @@ func main() {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		slog.Warn("Error loading .env file", "error", err)
 	}
 
 	s := server.NewServer()
@@ -19,6 +19,7 @@ func main() {
 	err = s.ListenAndServe()
 
 	if err != nil {
-		panic(fmt.Sprintf("cannot start server: %s", err))
+		slog.Error("Error starting server", "error", err)
+		os.Exit(1)
 	}
 }
