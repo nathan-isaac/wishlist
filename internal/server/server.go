@@ -21,8 +21,6 @@ type AdminUser struct {
 }
 
 type Server struct {
-	port    int
-	host    string
 	db      *sql.DB
 	ctx     context.Context
 	queries *gateway.Queries
@@ -36,12 +34,80 @@ type Wishlist struct {
 	Description string
 }
 
-func NewServer() (*http.Server, error) {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	host := os.Getenv("HOST")
-	database := os.Getenv("DATABASE_URL")
+type Options struct {
+	Port          int
+	Host          string
+	DatabaseUrl   string
+	AdminUsername string
+	AdminPassword string
+}
 
-	db, err := sql.Open("sqlite3", database)
+func DefaultOptions() *Options {
+	return &Options{
+		Port:          8080,
+		Host:          "localhost",
+		DatabaseUrl:   ":memory:",
+		AdminUsername: "",
+		AdminPassword: "",
+	}
+}
+
+type OptionsFunc func(options *Options) error
+
+func WithServerAddress(options *Options) error {
+	port, err := strconv.Atoi(os.Getenv("PORT"))
+
+	if err != nil {
+		return err
+	}
+
+	options.Port = port
+	options.Host = os.Getenv("HOST")
+
+	return nil
+}
+
+func WithDatabase(options *Options) error {
+	options.DatabaseUrl = os.Getenv("DATABASE_URL")
+	return nil
+}
+func WithAdmin(options *Options) error {
+	username := os.Getenv("ADMIN_USERNAME")
+	password := os.Getenv("ADMIN_PASSWORD")
+
+	if username == "" {
+		return fmt.Errorf("ADMIN_USERNAME environment variable is required")
+	}
+	if password == "" {
+		return fmt.Errorf("ADMIN_PASSWORD environment variable is required")
+	}
+
+	options.AdminUsername = username
+	options.AdminPassword = password
+	return nil
+}
+
+func WithOptions(options *Options, opts ...OptionsFunc) error {
+	for _, opt := range opts {
+		err := opt(options)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func NewServer() (*http.Server, error) {
+	options := DefaultOptions()
+	err := WithOptions(options, WithServerAddress, WithDatabase, WithAdmin)
+
+	if err != nil {
+		return nil, err
+	}
+
+	db, err := sql.Open("sqlite3", options.DatabaseUrl)
 
 	if err != nil {
 		return nil, err
@@ -51,8 +117,6 @@ func NewServer() (*http.Server, error) {
 	queries := gateway.New(db)
 
 	NewServer := &Server{
-		port:    port,
-		host:    host,
 		db:      db,
 		ctx:     ctx,
 		queries: queries,
@@ -61,14 +125,14 @@ func NewServer() (*http.Server, error) {
 			Ctx:     ctx,
 		},
 		admin: AdminUser{
-			Username: os.Getenv("ADMIN_USERNAME"),
-			Password: os.Getenv("ADMIN_PASSWORD"),
+			Username: options.AdminUsername,
+			Password: options.AdminPassword,
 		},
 	}
 
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf("%s:%d", NewServer.host, NewServer.port),
+		Addr:         fmt.Sprintf("%s:%d", options.Host, options.Port),
 		Handler:      NewServer.RegisterRoutes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,

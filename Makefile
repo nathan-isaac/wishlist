@@ -5,13 +5,11 @@ all: build
 
 build:
 	@echo "Building..."
-	@pnpm tailwindcss -i ./input.css -o ./cmd/web/assets/tailwind.css
 	@templ generate
 	@go build -o ./bin/main cmd/api/main.go
 
 build_dev:
 	@echo "Building..."
-	@templ generate
 	@go build -o ./bin/main cmd/api/main.go
 
 # Tailwind generation watch

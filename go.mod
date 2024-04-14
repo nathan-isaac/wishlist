@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/Rhymond/go-money v1.0.10
-	github.com/a-h/templ v0.2.598
+	github.com/a-h/templ v0.2.663
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/matoous/go-nanoid/v2 v2.0.0
