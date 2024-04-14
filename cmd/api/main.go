@@ -1,10 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"github.com/joho/godotenv"
+	"github.com/pressly/goose/v3"
 	"log/slog"
 	"os"
 	"wishlist/internal/server"
+	"wishlist/schema"
 )
 
 func main() {
@@ -16,7 +19,23 @@ func main() {
 		logger.Warn("Error loading .env file", "error", err)
 	}
 
-	s, err := server.NewServer()
+	db, err := sql.Open("libsql", os.Getenv("DATABASE_URL"))
+
+	if err != nil {
+		panic(err)
+	}
+
+	goose.SetBaseFS(schema.EmbedMigrations)
+
+	if err := goose.SetDialect("sqlite"); err != nil {
+		panic(err)
+	}
+
+	if err := goose.Up(db, "."); err != nil {
+		panic(err)
+	}
+
+	s, err := server.NewServer(db)
 
 	if err != nil {
 		logger.Error("Error initializing server", "error", err)

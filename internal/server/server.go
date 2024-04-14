@@ -67,10 +67,6 @@ func WithServerAddress(options *Options) error {
 	return nil
 }
 
-func WithDatabase(options *Options) error {
-	options.DatabaseUrl = os.Getenv("DATABASE_URL")
-	return nil
-}
 func WithAdmin(options *Options) error {
 	username := os.Getenv("ADMIN_USERNAME")
 	password := os.Getenv("ADMIN_PASSWORD")
@@ -99,15 +95,9 @@ func WithOptions(options *Options, opts ...OptionsFunc) error {
 	return nil
 }
 
-func NewServer() (*http.Server, error) {
+func NewServer(db *sql.DB) (*http.Server, error) {
 	options := DefaultOptions()
-	err := WithOptions(options, WithServerAddress, WithDatabase, WithAdmin)
-
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := sql.Open("libsql", options.DatabaseUrl)
+	err := WithOptions(options, WithServerAddress, WithAdmin)
 
 	if err != nil {
 		return nil, err
