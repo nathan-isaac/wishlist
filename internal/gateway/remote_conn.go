@@ -4,6 +4,8 @@ package gateway
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
