@@ -18,7 +18,7 @@ RUN go install github.com/a-h/templ/cmd/templ@v0.2.663
 COPY . ./
 COPY --from=base_node /app/cmd/web/assets/tailwind.css /app/cmd/web/assets/tailwind.css
 RUN templ generate
-RUN GOOS=linux go build -o /app/bin/main /app/cmd/api/main.go
+RUN GOOS=linux go build -tags remote -o /app/bin/main /app/cmd/api/main.go
 
 
 FROM alpine:3.19.1

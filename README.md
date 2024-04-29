@@ -13,7 +13,7 @@ Create a .env file in the root of the project with the following content
 ```bash
 PORT=8080
 HOST=localhost
-DATABASE_URL=.wishlist/wishlist.db
+DATABASE_URL=file:.wishlist/wishlist.db
 
 ADMIN_USER=admin
 ADMIN_PASSWORD=admin

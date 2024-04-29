@@ -1,11 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"github.com/joho/godotenv"
 	"github.com/pressly/goose/v3"
 	"log/slog"
 	"os"
+	"wishlist/internal/gateway"
 	"wishlist/internal/server"
 	"wishlist/schema"
 )
@@ -19,7 +19,7 @@ func main() {
 		logger.Warn("Error loading .env file", "error", err)
 	}
 
-	db, err := sql.Open("libsql", os.Getenv("DATABASE_URL"))
+	db, err := gateway.NewConnection()
 
 	if err != nil {
 		panic(err)

@@ -12,7 +12,6 @@ import (
 	"wishlist/internal/gateway"
 
 	_ "github.com/joho/godotenv/autoload"
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 type AdminUser struct {

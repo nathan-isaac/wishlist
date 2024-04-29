@@ -10,7 +10,7 @@ build:
 
 build_dev:
 	@echo "Building..."
-	@go build -o ./bin/main cmd/api/main.go
+	@go build -tags local -o ./bin/main cmd/api/main.go
 
 # Tailwind generation watch
 tailwind:

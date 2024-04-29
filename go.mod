@@ -22,6 +22,7 @@ require (
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/pressly/goose/v3 v3.19.2 // indirect
 	github.com/sethvargo/go-retry v0.2.4 // indirect
+	github.com/tursodatabase/go-libsql v0.0.0-20240418131656-29cbe90b12a1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
