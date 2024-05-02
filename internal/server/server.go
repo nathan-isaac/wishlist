@@ -20,11 +20,12 @@ type AdminUser struct {
 }
 
 type Server struct {
-	db      *sql.DB
-	ctx     context.Context
-	queries *gateway.Queries
-	domain  *domain.App
-	admin   AdminUser
+	db            *sql.DB
+	ctx           context.Context
+	queries       *gateway.Queries
+	domain        *domain.App
+	admin         AdminUser
+	sentryEnabled bool
 }
 
 type Wishlist struct {
@@ -117,6 +118,7 @@ func NewServer(db *sql.DB) (*http.Server, error) {
 			Username: options.AdminUsername,
 			Password: options.AdminPassword,
 		},
+		sentryEnabled: os.Getenv("SENTRY_DSN") != "",
 	}
 
 	// Declare Server config

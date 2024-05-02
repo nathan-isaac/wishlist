@@ -1,6 +1,7 @@
 package server
 
 import (
+	sentryecho "github.com/getsentry/sentry-go/echo"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -12,6 +13,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	if s.sentryEnabled {
+		e.Use(sentryecho.New(sentryecho.Options{
+			Repanic: true,
+		}))
+	}
 
 	fileServer := http.FileServer(http.FS(web.Files))
 	e.GET("/assets/*", echo.WrapHandler(fileServer))

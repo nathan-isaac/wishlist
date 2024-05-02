@@ -17,6 +17,9 @@ DATABASE_URL=file:.wishlist/wishlist.db
 
 ADMIN_USER=admin
 ADMIN_PASSWORD=admin
+
+SENTRY_DSN="https://{}.ingest.us.sentry.io/{}"
+SENTRY_SERVER_NAME=local
 ```
 
 ## Database
