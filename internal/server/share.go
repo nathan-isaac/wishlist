@@ -3,11 +3,26 @@ package server
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"log/slog"
 	"net/http"
 	"wishlist/internal/domain"
 	"wishlist/internal/utils"
 	"wishlist/internal/views/share"
 )
+
+func findCheckoutId(c echo.Context) (string, error) {
+	cookieId, err := c.Cookie(CHECKOUT_ID_COOKIE_NAME)
+
+	if err != nil {
+		return "", err
+	}
+
+	if cookieId.Value != "" {
+		return cookieId.Value, nil
+	}
+
+	return c.QueryParam("checkoutId"), nil
+}
 
 func (s *Server) SharesShowHandler(c echo.Context) error {
 	code := c.Param("share_code")
@@ -24,7 +39,12 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
 	}
 
-	checkoutId := c.QueryParam("checkoutId")
+	checkoutId, err := findCheckoutId(c)
+
+	if err != nil {
+		slog.Warn("error getting checkoutId: %s", err)
+	}
+
 	checkoutURL := ""
 
 	if checkoutId != "" {

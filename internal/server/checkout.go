@@ -176,7 +176,19 @@ func (s *Server) CheckoutsCreateHandler(c echo.Context) error {
 		}
 	}
 
+	saveCheckoutIdToSession(c, checkoutId)
+
 	return HxRedirect(c, "/checkouts/"+checkoutId)
+}
+
+const CHECKOUT_ID_COOKIE_NAME = "wishlist_checkout_id"
+
+func saveCheckoutIdToSession(c echo.Context, checkoutId string) {
+	cookie := new(http.Cookie)
+	cookie.Name = CHECKOUT_ID_COOKIE_NAME
+	cookie.Value = checkoutId
+	cookie.Expires = time.Now().Add(24 * 30 * time.Hour)
+	c.SetCookie(cookie)
 }
 
 type CheckoutUpdateRequest struct {
@@ -261,6 +273,8 @@ func (s *Server) CheckoutsUpdateHandler(c echo.Context) error {
 		"checkoutId": {checkoutRecord.Checkout.CheckoutID},
 	}
 
+	saveCheckoutIdToSession(c, checkoutRecord.Checkout.CheckoutID)
+
 	return HxRedirect(c, fmt.Sprintf("/shares/%s?%s", checkoutRecord.List.ShareCode, redirectParams.Encode()))
 }
 
@@ -308,6 +322,8 @@ func (s *Server) CheckoutItemsUpdateHandler(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	saveCheckoutIdToSession(c, checkoutItem.CheckoutItem.CheckoutID)
 
 	return HxRedirect(c, fmt.Sprintf("/checkouts/%s", checkoutItem.CheckoutItem.CheckoutID))
 }
