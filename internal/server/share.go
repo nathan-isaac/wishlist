@@ -45,6 +45,12 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 		slog.Warn("error getting checkoutId: %s", err)
 	}
 
+	checkoutItems, err := s.queries.FilterCheckoutItems(s.ctx, checkoutId)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting checkout items: %s", err))
+	}
+
 	checkoutURL := ""
 
 	if checkoutId != "" {
@@ -52,11 +58,12 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 	}
 
 	return Render(c, share.ShareView(domain.Share{
-		Id:          wishlist.ListID,
-		Code:        code,
-		List:        domain.ToList(wishlist),
-		Items:       utils.Map(items, domain.ToItem),
-		CheckoutUrl: checkoutURL,
-		CheckoutId:  checkoutId,
+		Id:             wishlist.ListID,
+		Code:           code,
+		List:           domain.ToList(wishlist),
+		Items:          utils.Map(items, domain.ToItem),
+		PurchasedCount: len(checkoutItems),
+		CheckoutUrl:    checkoutURL,
+		CheckoutId:     checkoutId,
 	}))
 }
