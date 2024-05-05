@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"wishlist/internal/domain"
+	"wishlist/internal/gateway"
 	"wishlist/internal/utils"
 	"wishlist/internal/views/share"
 )
@@ -39,10 +40,18 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting wishlist items: %s", err))
 	}
 
+	purchasedItems, err := s.queries.FilterCheckoutItemsByListId(s.ctx, wishlist.ListID)
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting purchased items: %s", err))
+	}
+
+	slog.Info("purchasedItems", "items", purchasedItems)
+
 	checkoutId, err := findCheckoutId(c)
 
 	if err != nil {
-		slog.Warn("error getting checkoutId: %s", err)
+		slog.Warn("error getting checkoutId", "error", err)
 	}
 
 	checkoutItems, err := s.queries.FilterCheckoutItems(s.ctx, checkoutId)
@@ -57,11 +66,31 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 		checkoutURL = fmt.Sprintf("/checkouts/%s", checkoutId)
 	}
 
+	itemToPurchased := make(map[string][]gateway.FilterCheckoutItemsByListIdRow)
+
+	for _, item := range purchasedItems {
+		itemToPurchased[item.ListItem.ListItemID] = append(itemToPurchased[item.ListItem.ListItemID], item)
+	}
+
+	viewItems := utils.Map(items, domain.ToItem)
+
+	for i, item := range viewItems {
+		if purchased, ok := itemToPurchased[item.ItemId]; ok {
+			purchasedQuantity := int64(0)
+
+			for _, p := range purchased {
+				purchasedQuantity += p.CheckoutItem.Quantity
+			}
+
+			viewItems[i].PurchasedQuantity = fmt.Sprintf("%d", purchasedQuantity)
+		}
+	}
+
 	return Render(c, share.ShareView(domain.Share{
 		Id:             wishlist.ListID,
 		Code:           code,
 		List:           domain.ToList(wishlist),
-		Items:          utils.Map(items, domain.ToItem),
+		Items:          viewItems,
 		PurchasedCount: len(checkoutItems),
 		CheckoutUrl:    checkoutURL,
 		CheckoutId:     checkoutId,

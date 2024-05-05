@@ -69,3 +69,10 @@ FROM checkout_item
          join list_item on checkout_item.list_item_id = list_item.list_item_id
 WHERE checkout_item.checkout_id = ?
   and checkout_item.list_item_id = ?;
+
+-- name: FilterCheckoutItemsByListId :many
+SELECT sqlc.embed(checkout_item), sqlc.embed(list_item), sqlc.embed(checkout)
+from checkout_item
+         join checkout on checkout_item.checkout_id = checkout.checkout_id
+         join list_item on checkout_item.list_item_id = list_item.list_item_id
+where list_item.list_id = ?;

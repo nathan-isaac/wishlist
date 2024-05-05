@@ -157,6 +157,64 @@ func (q *Queries) FilterCheckoutItems(ctx context.Context, checkoutID string) ([
 	return items, nil
 }
 
+const filterCheckoutItemsByListId = `-- name: FilterCheckoutItemsByListId :many
+SELECT checkout_item.checkout_item_id, checkout_item.checkout_id, checkout_item.list_item_id, checkout_item.quantity, checkout_item.created_at, checkout_item.updated_at, list_item.list_item_id, list_item.list_id, list_item.link, list_item.name, list_item.description, list_item.image_url, list_item.quantity, list_item.price, list_item.created_at, list_item.updated_at, checkout.checkout_id, checkout.list_id, checkout.created_at, checkout.updated_at
+from checkout_item
+         join checkout on checkout_item.checkout_id = checkout.checkout_id
+         join list_item on checkout_item.list_item_id = list_item.list_item_id
+where list_item.list_id = ?
+`
+
+type FilterCheckoutItemsByListIdRow struct {
+	CheckoutItem CheckoutItem
+	ListItem     ListItem
+	Checkout     Checkout
+}
+
+func (q *Queries) FilterCheckoutItemsByListId(ctx context.Context, listID string) ([]FilterCheckoutItemsByListIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, filterCheckoutItemsByListId, listID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FilterCheckoutItemsByListIdRow
+	for rows.Next() {
+		var i FilterCheckoutItemsByListIdRow
+		if err := rows.Scan(
+			&i.CheckoutItem.CheckoutItemID,
+			&i.CheckoutItem.CheckoutID,
+			&i.CheckoutItem.ListItemID,
+			&i.CheckoutItem.Quantity,
+			&i.CheckoutItem.CreatedAt,
+			&i.CheckoutItem.UpdatedAt,
+			&i.ListItem.ListItemID,
+			&i.ListItem.ListID,
+			&i.ListItem.Link,
+			&i.ListItem.Name,
+			&i.ListItem.Description,
+			&i.ListItem.ImageUrl,
+			&i.ListItem.Quantity,
+			&i.ListItem.Price,
+			&i.ListItem.CreatedAt,
+			&i.ListItem.UpdatedAt,
+			&i.Checkout.CheckoutID,
+			&i.Checkout.ListID,
+			&i.Checkout.CreatedAt,
+			&i.Checkout.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const findCheckout = `-- name: FindCheckout :one
 SELECT checkout.checkout_id, checkout.list_id, checkout.created_at, checkout.updated_at, list.list_id, list.name, list.description, list.share_code, list.public, list.created_at, list.updated_at
 FROM checkout
