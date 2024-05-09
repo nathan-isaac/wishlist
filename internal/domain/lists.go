@@ -49,6 +49,7 @@ type Item struct {
 	PriceValue        string
 	Quantity          int64
 	PurchasedQuantity string
+	Purchased         bool
 	NeededQuantity    string
 	ShowURL           string
 	CheckoutUrl       string
@@ -79,6 +80,7 @@ func ToItem(item gateway.ListItem) Item {
 		Quantity:          item.Quantity,
 		NeededQuantity:    fmt.Sprintf("%d", item.Quantity),
 		PurchasedQuantity: "0",
+		Purchased:         false,
 		ShowURL:           fmt.Sprintf("/admin/items/%s", item.ListItemID),
 		EditURL:           fmt.Sprintf("/admin/items/%s/edit", item.ListItemID),
 		CheckoutUrl:       "/checkouts",

@@ -36,8 +36,8 @@ templ ShareView(share domain.Share) {
 						</div>
 					}
 				</div>
-				<h2 class="sr-only">Products</h2>
-				<div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8">
+				<h2 class="text-2xl font-bold tracking-tight text-gray-900">Items</h2>
+				<div class="mt-6 grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8">
 					for _, item := range share.Items {
 						<div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
 							<div class="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
@@ -74,6 +74,29 @@ templ ShareView(share domain.Share) {
 										</svg>
 									</button>
 								</form>
+							</div>
+						</div>
+					}
+				</div>
+				<h2 class="mt-10 text-2xl font-bold tracking-tight text-gray-900">Purchased Items</h2>
+				<div class="mt-6 grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8">
+					for _, item := range share.PurchasedItems {
+						<div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
+							<div class="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
+								<img src={ item.ImageUrl } alt="Product photo" class="h-full w-full object-cover object-center sm:h-full sm:w-full"/>
+							</div>
+							<div class="flex flex-1 flex-col space-y-2 p-4">
+								<h3 class="text-sm font-medium text-gray-900">
+									<a href={ templ.URL(item.Link) } target="_blank">
+										<span aria-hidden="true" class="absolute inset-0"></span>
+										{ item.Name }
+									</a>
+								</h3>
+								<p class="text-sm text-gray-500">{ item.Description }</p>
+								<div class="flex flex-1 flex-col justify-end">
+									<p class="text-base font-medium text-gray-900">Approximately { item.Price }</p>
+									<p class="text-sm italic text-gray-500 pt-2">Purchased</p>
+								</div>
 							</div>
 						</div>
 					}

@@ -46,8 +46,6 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("error getting purchased items: %s", err))
 	}
 
-	slog.Info("purchasedItems", "items", purchasedItems)
-
 	checkoutId, err := findCheckoutId(c)
 
 	if err != nil {
@@ -83,14 +81,20 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 			}
 
 			viewItems[i].PurchasedQuantity = fmt.Sprintf("%d", purchasedQuantity)
+			viewItems[i].Purchased = viewItems[i].Quantity >= purchasedQuantity
 		}
 	}
 
 	return Render(c, share.ShareView(domain.Share{
-		Id:             wishlist.ListID,
-		Code:           code,
-		List:           domain.ToList(wishlist),
-		Items:          viewItems,
+		Id:   wishlist.ListID,
+		Code: code,
+		List: domain.ToList(wishlist),
+		Items: utils.Filter(viewItems, func(i domain.Item) bool {
+			return !i.Purchased
+		}),
+		PurchasedItems: utils.Filter(viewItems, func(i domain.Item) bool {
+			return i.Purchased
+		}),
 		PurchasedCount: len(checkoutItems),
 		CheckoutUrl:    checkoutURL,
 		CheckoutId:     checkoutId,

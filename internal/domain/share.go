@@ -5,6 +5,7 @@ type Share struct {
 	Code           string
 	List           List
 	Items          []Item
+	PurchasedItems []Item
 	PurchasedCount int
 	CheckoutUrl    string
 	CheckoutId     string

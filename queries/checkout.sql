@@ -68,7 +68,8 @@ SELECT sqlc.embed(checkout_item), sqlc.embed(list_item)
 FROM checkout_item
          join list_item on checkout_item.list_item_id = list_item.list_item_id
 WHERE checkout_item.checkout_id = ?
-  and checkout_item.list_item_id = ?;
+  and checkout_item.list_item_id = ?
+order by list_item.name;
 
 -- name: FilterCheckoutItemsByListId :many
 SELECT sqlc.embed(checkout_item), sqlc.embed(list_item), sqlc.embed(checkout)
