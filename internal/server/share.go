@@ -81,13 +81,13 @@ func (s *Server) SharesShowHandler(c echo.Context) error {
 			}
 
 			viewItems[i].PurchasedQuantity = fmt.Sprintf("%d", purchasedQuantity)
-			viewItems[i].Purchased = viewItems[i].Quantity >= purchasedQuantity
+			viewItems[i].Purchased = purchasedQuantity >= viewItems[i].Quantity
 		}
 	}
 
 	return Render(c, share.ShareView(domain.Share{
 		Id:   wishlist.ListID,
-		Code: code,
+		Code: wishlist.ShareCode,
 		List: domain.ToList(wishlist),
 		Items: utils.Filter(viewItems, func(i domain.Item) bool {
 			return !i.Purchased
